@@ -1,4 +1,4 @@
-package com.imgeek.designpattern;
+package com.imgeek.design_of_pattern;
 
 /**
  * author:  xiemin
@@ -11,10 +11,10 @@ interface IGamePlayer {
 }
 
 class GamerPlayer implements IGamePlayer {
-    private String name;
+    private String _name;
 
-    public GamerPlayer(String _name) {
-        this.name = _name;
+    public GamerPlayer(String name) {
+        this._name = name;
     }
 
     @Override
