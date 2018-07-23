@@ -8,46 +8,111 @@ package com.imgeek.locks;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.imgeek.locks.RedisUtil.EX;
+import static com.imgeek.locks.RedisUtil.NX;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
-class MyRedisLock implements DistributedLock {
-    private static final String NX = "nx";//return null if key exist
-    private static final String XX = "xx";//return null if key not exist
-    private static final String EX = "ex";//秒
-    private static final String PX = "px";//毫秒
+class RedisUtil {
+    private Jedis jedis;
 
-    private JedisPool pool;
-    private String _key;
-    private String _val;
-    private int _expire;
+    public static final String NX = "nx";//return null if key exist
+    public static final String XX = "xx";//return null if key not exist
+    public static final String EX = "ex";//秒
+    public static final String PX = "px";//毫秒
 
-    public MyRedisLock(String key, String val, int expire, String host, int port, String password) {
-        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxWaitMillis(0);
-        jedisPoolConfig.setMaxTotal(20);//必须大于线程数，否则会出现getResource失败的情况
-        pool = new JedisPool(jedisPoolConfig, host, port, 2000, password);
-        _key = key;
-        _val = val;
-        _expire = expire;
+    public RedisUtil(String host, int port, int timeout, String password) {
+        jedis = new Jedis(host, port, timeout);
+        jedis.auth(password);
     }
 
     /**
+     * 封装redis setnx命令
+     *
+     * @param key
+     * @param val
+     * @param nxxx
+     * @param expx
+     * @param expire
+     * @return
+     */
+    public boolean set(String key, String val, String nxxx, String expx, long expire) {
+        String ret = null;
+        try {
+            ret = jedis.set(key, val, nxxx, expx, expire);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+
+        return ret != null && ret.equalsIgnoreCase("ok") ? true : false;
+    }
+
+    /**
+     * 封装redis get命令
+     *
+     * @param key
+     * @return
+     */
+    public String get(String key) {
+        try {
+            return jedis.get(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return null;
+    }
+
+    /**
+     * 封装redis del方法
+     *
+     * @param key
+     * @return
+     */
+    public boolean del(String key) {
+        Long ret = null;
+        try {
+            ret = jedis.del(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return ret != null && ret > 0 ? true : false;
+    }
+}
+
+class MyRedisLock implements DistributedLock {
+
+
+    private JedisPool pool;
+    private String key;
+    private String val;
+    private int expire;
+
+    private RedisUtil redisUtil;
+
+    public MyRedisLock(String key, String val, int expire, String host, int port, String password) {
+        this.redisUtil = new RedisUtil(host, port, 2000, password);
+        this.key = key;
+        this.val = val;
+        this.expire = expire;
+    }
+
+    /**
+     * todo 如果网络异常等情况，线程会一直锁死,需要在循环中加入超时
      * 阻塞加锁(悲观锁)
      */
     public void lock() {
-        int i = 0;
         while (true) {
-            Jedis jedis = pool.getResource();
-            String opt_ret = jedis.set(_key, _val, NX, EX, _expire);
-
-            log(" i: " + (++i) + " opt_ret: " + opt_ret);
-            if (opt_ret != null && opt_ret.equalsIgnoreCase("ok")) {
-                jedis.close();
+            boolean ret = redisUtil.set(key, val, NX, EX, expire);
+            if (ret) {
                 break;
             } else {
                 try {
@@ -56,7 +121,6 @@ class MyRedisLock implements DistributedLock {
                     e.printStackTrace();
                 }
             }
-            jedis.close();
         }
     }
 
@@ -66,18 +130,12 @@ class MyRedisLock implements DistributedLock {
      * @return
      */
     public boolean trylock() {
-        Jedis jedis = pool.getResource();
-        String opt_ret = jedis.set(_key, _val, NX, EX, _expire);
-        if (opt_ret != null && opt_ret.equalsIgnoreCase("ok")) {
-            jedis.close();
-            return true;
-        }
-        jedis.close();
-        return false;
+        return redisUtil.set(key, val, NX, EX, expire);
     }
 
     /**
      * 加超时的阻塞锁
+     *
      * @param startmillis 开始时间戳
      * @param timeUnit
      */
@@ -89,13 +147,12 @@ class MyRedisLock implements DistributedLock {
      * 保证解锁的客户端和之前加锁的客户端是同一个
      */
     public void unlock() {
-        Jedis jedis = pool.getResource();
-        String val = jedis.get(_key);
-        if (val != null && val.equalsIgnoreCase(_val)) {
-            log("del val: " + val);
-            jedis.del(_key);
+        String val = redisUtil.get(key);
+        if (val != null && val.equalsIgnoreCase(this.val)) {
+            log("del val: " + this.val);
+            redisUtil.del(key);
         }
-        jedis.close();
+        log("only unlock what self thread create lock");
     }
 
     /**
@@ -107,15 +164,17 @@ class MyRedisLock implements DistributedLock {
         System.out.println("thread-" + currentThread().getId() + " msg: " + msg);
     }
 
+    public static long step = 0;
+
     public static void main(String[] args) {
         int NUM = 10;
-        MyRedisLock myRedisLock = new MyRedisLock("key", "val", 10, "10.0.1.9", 6379, "ruck523.Erin");
         for (int i = 0; i < NUM; i++) {
             Thread thread = new Thread(
                     () -> {
-                        if (myRedisLock.trylock()) {
-                            myRedisLock.unlock();
-                        }
+                        MyRedisLock myRedisLock = new MyRedisLock("key", "val_".concat(currentThread().getName()), 2, "10.0.1.9", 6379, "ruck523.Erin");
+                        myRedisLock.lock();
+                        System.out.println((++step));
+                        myRedisLock.unlock();
                     }
             );
             thread.start();

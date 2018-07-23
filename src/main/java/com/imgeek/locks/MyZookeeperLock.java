@@ -20,9 +20,8 @@ public class MyZookeeperLock implements DistributedLock {
     private static final Logger log = LoggerFactory.getLogger(MyZookeeperLock.class);
     private ZooKeeper zooKeeper;
     private final String rootPath = "/dislock";
-    private final String prePath = "lock-";
-    private String currentNode = "";
-    private static int step = 0;
+    private final String preNodeName = "lock-";
+    private String currentNodeName = "";
 
     public MyZookeeperLock(String host, int sessionTimeout, Watcher watcher) throws IOException, KeeperException, InterruptedException {
         zooKeeper = new ZooKeeper(host, sessionTimeout, watcher);
@@ -30,26 +29,7 @@ public class MyZookeeperLock implements DistributedLock {
     }
 
     private void init() throws KeeperException, InterruptedException {
-        currentNode = createNode();
-    }
-
-    public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
-        final int NUM = 50;
-        for (int i = 0; i < NUM; i++) {
-            Thread thread = new Thread(() -> {
-                MyZookeeperLock myZookeeperLock = null;
-                try {
-                    myZookeeperLock = new MyZookeeperLock("10.0.1.9:2181", 8000, null);
-                    myZookeeperLock.lock();
-                    System.out.println("step : ".concat(String.valueOf(++step)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    myZookeeperLock.unlock();
-                }
-            });
-            thread.start();
-        }
+        currentNodeName = createNode();
     }
 
     /**
@@ -60,14 +40,14 @@ public class MyZookeeperLock implements DistributedLock {
     @Override
     public void lock() throws Exception {
         while (true) {
-            List<String> childNodes = getSortedChildNode();
-            int index = getSelfIndexofChildrenNodes(childNodes, currentNode);
-            log("currentNode : ".concat(currentNode).concat(" index : ").concat(String.valueOf(index)));
+            List<String> childNodeNames = getSortedChildNodeNames();
+            int index = getSelfIndexofChildrenNodeNames(childNodeNames, currentNodeName);
+            log("currentNode : ".concat(currentNodeName).concat(" index : ").concat(String.valueOf(index)));
             if (index <= 0) {
                 break;
             } else {
                 // 如果次小的节点被删除了，则表示当前客户端的节点应该是最小的了，所以使用CountDownLatch来实现等待
-                String preNode = getPreSelfNodeOfChildrenNodes(childNodes, currentNode);
+                String preNodeName = getPreNodeNameOfChildrenNodes(childNodeNames, currentNodeName);
                 final CountDownLatch latch = new CountDownLatch(1);
                 final Watcher previousListener = new Watcher() {
                     public void process(WatchedEvent event) {
@@ -78,10 +58,10 @@ public class MyZookeeperLock implements DistributedLock {
                         }
                     }
                 };
-                log("preNode : ".concat(rootPath).concat("/").concat(preNode));
-                zooKeeper.exists(rootPath.concat("/").concat(preNode), previousListener);
+                log("WholePreNodeName : ".concat(rootPath).concat("/").concat(preNodeName));
+                zooKeeper.exists(rootPath.concat("/").concat(preNodeName), previousListener);
                 latch.await();
-                log("".concat("preNode :".concat(preNode)).concat(" awit"));
+                log("".concat("preNodeName :".concat(preNodeName)).concat(" awit"));
             }
         }
     }
@@ -98,13 +78,13 @@ public class MyZookeeperLock implements DistributedLock {
 
     @Override
     public void unlock() {
-        log("unlock :".concat(currentNode));
-        if (!currentNode.isEmpty()) {
+        log("unlock :".concat(currentNodeName));
+        if (!currentNodeName.isEmpty()) {
             try {
-                Stat stat = zooKeeper.exists(rootPath.concat("/").concat(currentNode), false);
+                Stat stat = zooKeeper.exists(rootPath.concat("/").concat(currentNodeName), false);
                 if (stat != null) {
-                    log("delete : ".concat(rootPath).concat("/").concat(currentNode));
-                    zooKeeper.delete(rootPath.concat("/").concat(currentNode), -1);
+                    log("delete : ".concat(rootPath).concat("/").concat(currentNodeName));
+                    zooKeeper.delete(rootPath.concat("/").concat(currentNodeName), -1);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,7 +99,7 @@ public class MyZookeeperLock implements DistributedLock {
      * @throws KeeperException
      * @throws InterruptedException
      */
-    private List<String> getSortedChildNode() throws KeeperException, InterruptedException {
+    private List<String> getSortedChildNodeNames() throws KeeperException, InterruptedException {
         List<String> childrenNodes = zooKeeper.getChildren(rootPath, false);
         childrenNodes.sort(String::compareTo);
         return childrenNodes;
@@ -132,7 +112,7 @@ public class MyZookeeperLock implements DistributedLock {
      * @param selfNode
      * @return
      */
-    private int getSelfIndexofChildrenNodes(List<String> childSortedNodes, String selfNode) {
+    private int getSelfIndexofChildrenNodeNames(List<String> childSortedNodes, String selfNode) {
         return childSortedNodes.indexOf(selfNode);
     }
 
@@ -143,8 +123,8 @@ public class MyZookeeperLock implements DistributedLock {
      * @param selfNode
      * @return
      */
-    private String getPreSelfNodeOfChildrenNodes(List<String> childSortedNodes, String selfNode) {
-        int index = getSelfIndexofChildrenNodes(childSortedNodes, selfNode);
+    private String getPreNodeNameOfChildrenNodes(List<String> childSortedNodes, String selfNode) {
+        int index = getSelfIndexofChildrenNodeNames(childSortedNodes, selfNode);
         if (index > 0) {
             return childSortedNodes.get(index - 1);
         }
@@ -163,12 +143,38 @@ public class MyZookeeperLock implements DistributedLock {
         if (stat == null) {
             zooKeeper.create(rootPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
-        String createRet = zooKeeper.create(rootPath.concat("/").concat(prePath), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+        String createRet = zooKeeper.create(rootPath.concat("/").concat(preNodeName), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
         log("create : ".concat(createRet));
         return createRet.substring(createRet.lastIndexOf("/") + 1, createRet.length());
     }
 
+    /**
+     * 记录日志
+     *
+     * @param msg
+     */
     public static void log(String msg) {
         System.out.println(msg);
+    }
+
+    private static int step = 0;
+
+    public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
+        final int NUM = 50;
+        for (int i = 0; i < NUM; i++) {
+            Thread thread = new Thread(() -> {
+                MyZookeeperLock myZookeeperLock = null;
+                try {
+                    myZookeeperLock = new MyZookeeperLock("10.0.1.9:2181", 8000, null);
+                    myZookeeperLock.lock();
+                    System.out.println("step : ".concat(String.valueOf(++step)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    myZookeeperLock.unlock();
+                }
+            });
+            thread.start();
+        }
     }
 }
