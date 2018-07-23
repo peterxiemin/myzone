@@ -7,17 +7,17 @@ package com.imgeek.jvm;
  */
 
 @FunctionalInterface
-interface FunctionInterface1 {
+interface FunctionInterface {
     public abstract void run();
 }
 
-class FunctionObject implements FunctionInterface1 {
+class FunctionObject implements FunctionInterface {
     @Override
     public void run() {
 
     }
 
-    public FunctionObject(FunctionInterface1 functionInterface1) {
+    public FunctionObject(FunctionInterface functionInterface1) {
     }
 }
 
@@ -26,7 +26,7 @@ public class MyFunctionInterface {
         /**
          * lambda表示函数接口
          */
-        FunctionInterface1 functionInterface1 = () -> {
+        FunctionInterface functionInterface1 = () -> {
             System.out.println("Hello World");
         };
 
