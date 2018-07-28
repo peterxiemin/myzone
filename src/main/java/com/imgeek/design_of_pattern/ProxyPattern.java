@@ -48,8 +48,4 @@ class GamerPlayerProxy implements IGamePlayer {
 
 
 public class ProxyPattern {
-    public static void main(String[] args) {
-        IGamePlayer iGamePlayer = new GamerPlayerProxy("peter");
-        iGamePlayer.killBoss();
-    }
 }

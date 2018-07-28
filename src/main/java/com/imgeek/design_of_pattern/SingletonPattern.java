@@ -16,11 +16,4 @@ public class SingletonPattern {
             return _instance;
         }
     }
-
-    public static void main(String[] args) {
-        final int NUM = 10;
-        for (int i = 0; i < NUM; i++) {
-            System.out.println(SingletonPattern.getInstance());
-        }
-    }
 }

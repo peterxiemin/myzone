@@ -163,21 +163,4 @@ class MyRedisLock implements DistributedLock {
     private void log(String msg) {
         System.out.println("thread-" + currentThread().getId() + " msg: " + msg);
     }
-
-    public static long step = 0;
-
-    public static void main(String[] args) {
-        int NUM = 10;
-        for (int i = 0; i < NUM; i++) {
-            Thread thread = new Thread(
-                    () -> {
-                        MyRedisLock myRedisLock = new MyRedisLock("key", "val_".concat(currentThread().getName()), 2, "10.0.1.9", 6379, "ruck523.Erin");
-                        myRedisLock.lock();
-                        System.out.println((++step));
-                        myRedisLock.unlock();
-                    }
-            );
-            thread.start();
-        }
-    }
 }
