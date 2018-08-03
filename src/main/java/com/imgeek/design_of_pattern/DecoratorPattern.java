@@ -34,9 +34,4 @@ class ConcreateDecorator extends Decorator {
 
 
 public class DecoratorPattern {
-    public static void main(String[] args) {
-        ConcreateComponent concreateComponent = new ConcreateComponent();
-        ConcreateDecorator concreateDecorator = new ConcreateDecorator(concreateComponent);
-        concreateDecorator.operation();
-    }
 }

@@ -25,4 +25,8 @@ public class WaitingQueue<E> {
         }
         return q.remove();
     }
+
+    public int size() {
+        return q.size();
+    }
 }

@@ -6,37 +6,13 @@ package com.imgeek.jvm;
  * desc:    函数接口
  */
 
+/**
+ * 与其他接口区别是
+ * 1、编译器只允许一个函数定义
+ * 2、可以使用lamda表达式
+ */
+
 @FunctionalInterface
-interface FunctionInterface1 {
-    public abstract void run();
-}
-
-class FunctionObject implements FunctionInterface1 {
-    @Override
-    public void run() {
-
-    }
-
-    public FunctionObject(FunctionInterface1 functionInterface1) {
-    }
-}
-
-public class MyFunctionInterface {
-    public static void main(String[] args) {
-        /**
-         * lambda表示函数接口
-         */
-        FunctionInterface1 functionInterface1 = () -> {
-            System.out.println("Hello World");
-        };
-
-        /**
-         * lambda表示内部匿名类
-         */
-        FunctionObject myObject = new FunctionObject(
-                () -> {
-                    System.out.println("Hello World");
-                }
-        );
-    }
+public interface MyFunctionInterface {
+    void apply();
 }

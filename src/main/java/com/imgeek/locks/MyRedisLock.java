@@ -7,36 +7,57 @@ package com.imgeek.locks;
  */
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.imgeek.locks.RedisUtil.EX;
+import static com.imgeek.locks.RedisUtil.NX;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 class RedisUtil {
+    private Jedis jedis;
+
     public static final String NX = "nx";//return null if key exist
     public static final String XX = "xx";//return null if key not exist
     public static final String EX = "ex";//秒
     public static final String PX = "px";//毫秒
-
-    private Jedis jedis;
 
     public RedisUtil(String host, int port, int timeout, String password) {
         jedis = new Jedis(host, port, timeout);
         jedis.auth(password);
     }
 
-    public String set(String key, String val, String nxxx, String expx, int expire) {
+    /**
+     * 封装redis setnx命令
+     *
+     * @param key
+     * @param val
+     * @param nxxx
+     * @param expx
+     * @param expire
+     * @return
+     */
+    public boolean set(String key, String val, String nxxx, String expx, long expire) {
+        String ret = null;
         try {
-            return jedis.set(key, val, nxxx, expx, expire);
+            ret = jedis.set(key, val, nxxx, expx, expire);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             jedis.close();
         }
-        return null;
+
+        return ret != null && ret.equalsIgnoreCase("ok") ? true : false;
     }
 
+    /**
+     * 封装redis get命令
+     *
+     * @param key
+     * @return
+     */
     public String get(String key) {
         try {
             return jedis.get(key);
@@ -48,39 +69,50 @@ class RedisUtil {
         return null;
     }
 
-    public void del(String key) {
+    /**
+     * 封装redis del方法
+     *
+     * @param key
+     * @return
+     */
+    public boolean del(String key) {
+        Long ret = null;
         try {
-            jedis.del(key);
+            ret = jedis.del(key);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             jedis.close();
         }
+        return ret != null && ret > 0 ? true : false;
     }
 }
 
 class MyRedisLock implements DistributedLock {
-    private RedisUtil redisUtil;
+
+
+    private JedisPool pool;
     private String key;
     private String val;
     private int expire;
 
-    public MyRedisLock(RedisUtil redisUtil, String key, String val, int expire) {
+    private RedisUtil redisUtil;
+
+    public MyRedisLock(String key, String val, int expire, String host, int port, String password) {
+        this.redisUtil = new RedisUtil(host, port, 2000, password);
         this.key = key;
         this.val = val;
         this.expire = expire;
-        this.redisUtil = redisUtil;
-
     }
 
     /**
+     * todo 如果网络异常等情况，线程会一直锁死,需要在循环中加入超时
      * 阻塞加锁(悲观锁)
      */
     public void lock() {
-        int i = 0;
         while (true) {
-            String opt_ret = redisUtil.set(key, val, RedisUtil.NX, RedisUtil.PX, expire);
-            if (opt_ret != null && opt_ret.equalsIgnoreCase("ok")) {
+            boolean ret = redisUtil.set(key, val, NX, EX, expire);
+            if (ret) {
                 break;
             } else {
                 try {
@@ -98,11 +130,7 @@ class MyRedisLock implements DistributedLock {
      * @return
      */
     public boolean trylock() {
-        String opt_ret = redisUtil.set(key, val, RedisUtil.NX, RedisUtil.PX, expire);
-        if (opt_ret != null && opt_ret.equalsIgnoreCase("ok")) {
-            return true;
-        }
-        return false;
+        return redisUtil.set(key, val, NX, EX, expire);
     }
 
     /**
@@ -120,10 +148,11 @@ class MyRedisLock implements DistributedLock {
      */
     public void unlock() {
         String val = redisUtil.get(key);
-        if (val != null && val.equalsIgnoreCase(val)) {
-            log("del val: " + val);
+        if (val != null && val.equalsIgnoreCase(this.val)) {
+            log("del val: " + this.val);
             redisUtil.del(key);
         }
+        log("only unlock what self thread create lock");
     }
 
     /**
@@ -133,23 +162,5 @@ class MyRedisLock implements DistributedLock {
      */
     private void log(String msg) {
         System.out.println("thread-" + currentThread().getId() + " msg: " + msg);
-    }
-
-    public static int step = 0;
-
-    public static void main(String[] args) {
-        int NUM = 50;
-        for (int i = 0; i < NUM; i++) {
-            Thread thread = new Thread(
-                    () -> {
-                        RedisUtil redisUtil = new RedisUtil("10.0.1.9", 6379, 5000, "ruck523.Erin");
-                        MyRedisLock myRedisLock = new MyRedisLock(redisUtil, "key", currentThread().getName(), 2000);
-                        myRedisLock.lock();
-                        System.out.println("step".concat(String.valueOf(++step)));
-                        myRedisLock.unlock();
-                    }
-            );
-            thread.start();
-        }
     }
 }

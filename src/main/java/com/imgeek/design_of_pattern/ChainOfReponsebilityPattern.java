@@ -68,15 +68,4 @@ class Son extends IHandler {
 }
 
 public class ChainOfReponsebilityPattern {
-    public static void main(String[] args) {
-        Husband husband = new Husband();
-        Father father = new Father();
-        Son son = new Son();
-        husband.setIHandlerNext(father);
-        father.setIHandlerNext(son);
-
-        Women women = new Women();
-        women.addHandler(husband);
-        women.chainHandle();
-    }
 }
