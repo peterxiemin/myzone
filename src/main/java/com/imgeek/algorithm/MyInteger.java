@@ -3,7 +3,7 @@ package com.imgeek.algorithm;
 /**
  * auth : xiemin
  * date : 2018-08-04
- * desc ： 实现Integer.parseInt
+ * desc ：实现Integer.parseInt
  */
 public class MyInteger {
     public static int parseInt(String str) {
