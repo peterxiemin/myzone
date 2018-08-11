@@ -1,5 +1,11 @@
 package com.imgeek.design_of_pattern;
 
+/**
+ * auth: xiemin
+ * date: 2018-08-04
+ * desc: 装饰者模式
+ */
+
 abstract class Component {
     public abstract void operation();
 }
