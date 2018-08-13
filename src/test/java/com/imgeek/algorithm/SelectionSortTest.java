@@ -15,7 +15,7 @@ public class SelectionSortTest {
 
     @Before
     public void setUp() throws Exception {
-        selectionSort = new SelectionSort();
+        selectionSort = new SelectionSort(MySort.Sort.ASC);
         for (int i = 0; i < size; i++) {
             arr[i] = (int) (Math.random() * size);
         }
@@ -23,8 +23,8 @@ public class SelectionSortTest {
 
     @Test
     public void sort() {
-        int[] sort = selectionSort.sort(arr);
-        for(int number : sort){
+        selectionSort.sort(arr);
+        for(int number : arr){
             System.out.print(number + "|");
         }
     }

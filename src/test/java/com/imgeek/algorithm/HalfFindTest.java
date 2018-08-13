@@ -15,12 +15,12 @@ public class HalfFindTest {
 
     @Before
     public void setUp() throws Exception {
-        quickSort = new QuickSort(sorted);
+        quickSort = new QuickSort(MySort.Sort.ASC);
         halfFind = new HalfFind(sorted);
         for (int i = 0; i < size; i++) {
             arr[i] = (int) (Math.random() * size);
         }
-        quickSort.sort(arr, 0, arr.length - 1);
+        quickSort.sort(arr);
     }
 
     @Test

@@ -5,15 +5,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class InsertionSortTest {
+public class MergeSortTest {
 
-    private InsertionSort insertionSort;
+    private MergeSort mergeSort;
     private int size = 66;
     private int[] arr = new int[size];
 
     @Before
     public void setUp() throws Exception {
-        insertionSort = new InsertionSort(MySort.Sort.ASC);
+        mergeSort = new MergeSort(MySort.Sort.ASC);
         for (int i = 0; i < size; i++) {
             arr[i] = (int) (Math.random() * size);
         }
@@ -21,8 +21,7 @@ public class InsertionSortTest {
 
     @Test
     public void sort() {
-
-        insertionSort.sort(arr);
+        mergeSort.sort(arr);
         for(int number : arr){
             System.out.print(number + "|");
         }

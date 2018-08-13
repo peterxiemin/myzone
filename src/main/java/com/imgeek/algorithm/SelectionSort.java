@@ -8,16 +8,20 @@ package com.imgeek.algorithm;
  * @author HongMong
  * @date 2018-08-08
  */
-public class SelectionSort {
+public class SelectionSort extends MySort{
 
-    public int[] sort(int[] ints){
+    public SelectionSort(Sort sort) {
+        super(sort);
+    }
+
+    public void sort(int[] ints){
         int length = ints.length;
         int minIndex,temp;
 
         for(int i = 0;i < length - 1;i++){
             minIndex = i;
             for(int j = i + 1;j < length;j++){
-                if(ints[minIndex] > ints[j]){
+                if(compare(ints[minIndex],ints[j])){
                     minIndex = j;
                 }
             }
@@ -25,7 +29,5 @@ public class SelectionSort {
             ints[i] = ints[minIndex];
             ints[minIndex] = temp;
         }
-
-        return ints;
     }
 }
