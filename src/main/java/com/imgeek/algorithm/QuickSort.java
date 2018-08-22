@@ -6,27 +6,18 @@ package com.imgeek.algorithm;
  * desc:    快速排序
  */
 
-public class QuickSort {
+public class QuickSort extends MySort{
 
-    /**
-     * sorted : 0 正序, sorted ：1 逆序
-     */
-    private int sorted = 0;
-
-    public QuickSort(int sorted) {
-        this.sorted = sorted;
+    public QuickSort(Sort sort) {
+        super(sort);
     }
 
-    /**
-     * @param a
-     * @param b
-     * @return
-     */
-    private boolean compare(int a, int b) {
-        return sorted == 0 ? a > b : a < b;
+    @Override
+    public void sort(int[] ints) {
+        sort(ints,0,ints.length - 1);
     }
 
-    public boolean sort(int[] arr, int start, int end) {
+    private void sort(int[] arr, int start, int end) {
         boolean switchTag = false;
         int i = start, j = end;
 
@@ -54,7 +45,7 @@ public class QuickSort {
         if (i < end)
             sort(arr, i + 1, end);
 
-        return true;
+        return;
     }
 
     public void showForeach(int[] arr) {

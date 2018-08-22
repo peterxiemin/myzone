@@ -12,11 +12,10 @@ public class QuickSortTest {
     private QuickSort quickSort;
     private int size = 10000;
     private int[] arr = new int[size];
-    private int sorted = 1;
 
     @Before
     public void setUp() throws Exception {
-        quickSort = new QuickSort(sorted);
+        quickSort = new QuickSort(MySort.Sort.ASC);
         for (int i = 0; i < size; i++) {
             arr[i] = (int) (Math.random() * size);
         }
@@ -24,10 +23,10 @@ public class QuickSortTest {
 
     @Test
     public void sort() {
-        quickSort.sort(arr, 0, arr.length - 1);
+        quickSort.sort(arr);
         quickSort.showForeach(arr);
         for (int i = 0; i < size - 1; i++) {
-            if (sorted == 0) {
+            if (quickSort.getSort() == MySort.Sort.DESC) {
                 if (arr[i] > arr[i + 1]) {
                     assertFalse(true);
                 }
