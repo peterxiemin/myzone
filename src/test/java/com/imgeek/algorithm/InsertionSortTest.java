@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class InsertionSortTest {
+public class InsertionSortTest extends SortTest {
 
-    private InsertionSort insertionSort;
-    private int size = 66;
+    private MySort insertionSort;
+    private int size = 1000;
     private int[] arr = new int[size];
 
     @Before
@@ -21,10 +21,11 @@ public class InsertionSortTest {
 
     @Test
     public void sort() {
-
+        insertionSort = new InsertionSort(MySort.Sort.DESC);
         insertionSort.sort(arr);
-        for(int number : arr){
-            System.out.print(number + "|");
-        }
+        sortAssert(insertionSort, size, arr);
+        insertionSort = new InsertionSort(MySort.Sort.ASC);
+        insertionSort.sort(arr);
+        sortAssert(insertionSort, size, arr);
     }
 }

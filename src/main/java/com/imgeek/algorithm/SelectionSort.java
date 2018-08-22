@@ -14,20 +14,20 @@ public class SelectionSort extends MySort{
         super(sort);
     }
 
-    public void sort(int[] ints){
-        int length = ints.length;
+    public void sort(int[] arr){
+        int length = arr.length;
         int minIndex,temp;
 
         for(int i = 0;i < length - 1;i++){
             minIndex = i;
             for(int j = i + 1;j < length;j++){
-                if(compare(ints[minIndex],ints[j])){
+                if(compare(arr[minIndex],arr[j])){
                     minIndex = j;
                 }
             }
-            temp = ints[i];
-            ints[i] = ints[minIndex];
-            ints[minIndex] = temp;
+            temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
         }
     }
 }
