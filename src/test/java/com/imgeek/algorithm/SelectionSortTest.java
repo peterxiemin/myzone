@@ -7,15 +7,14 @@ import javax.sound.midi.Soundbank;
 
 import static org.junit.Assert.*;
 
-public class SelectionSortTest {
+public class SelectionSortTest extends SortTest {
 
-    private SelectionSort selectionSort;
-    private int size = 66;
+    private MySort selectionSort;
+    private int size = 1000;
     private int[] arr = new int[size];
 
     @Before
     public void setUp() throws Exception {
-        selectionSort = new SelectionSort(MySort.Sort.ASC);
         for (int i = 0; i < size; i++) {
             arr[i] = (int) (Math.random() * size);
         }
@@ -23,9 +22,11 @@ public class SelectionSortTest {
 
     @Test
     public void sort() {
+        selectionSort = new SelectionSort(MySort.Sort.DESC);
         selectionSort.sort(arr);
-        for(int number : arr){
-            System.out.print(number + "|");
-        }
+        sortAssert(selectionSort, size, arr);
+        selectionSort = new SelectionSort(MySort.Sort.ASC);
+        selectionSort.sort(arr);
+        sortAssert(selectionSort, size, arr);
     }
 }

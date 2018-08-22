@@ -13,8 +13,8 @@ public class QuickSort extends MySort{
     }
 
     @Override
-    public void sort(int[] ints) {
-        sort(ints,0,ints.length - 1);
+    public void sort(int[] arr) {
+        sort(arr,0,arr.length - 1);
     }
 
     private void sort(int[] arr, int start, int end) {
@@ -46,11 +46,5 @@ public class QuickSort extends MySort{
             sort(arr, i + 1, end);
 
         return;
-    }
-
-    public void showForeach(int[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            System.out.printf(String.valueOf(arr[i]).concat(" "));
-        }
     }
 }

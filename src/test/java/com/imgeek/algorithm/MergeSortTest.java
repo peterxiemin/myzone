@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class MergeSortTest {
+public class MergeSortTest extends SortTest {
 
-    private MergeSort mergeSort;
-    private int size = 66;
+    private MySort mergeSort;
+    private int size = 1000;
     private int[] arr = new int[size];
 
     @Before
@@ -21,9 +21,11 @@ public class MergeSortTest {
 
     @Test
     public void sort() {
+        mergeSort = new MergeSort(MySort.Sort.DESC);
         mergeSort.sort(arr);
-        for(int number : arr){
-            System.out.print(number + "|");
-        }
+        sortAssert(mergeSort, size, arr);
+        mergeSort = new MergeSort(MySort.Sort.ASC);
+        mergeSort.sort(arr);
+        sortAssert(mergeSort, size, arr);
     }
 }

@@ -12,17 +12,17 @@ public class InsertionSort extends MySort{
         super(sort);
     }
 
-    public void sort(int[] ints){
-        int length = ints.length;
+    public void sort(int[] arr){
+        int length = arr.length;
         int preIndex,current;
         for(int i = 1;i < length;i++){
             preIndex = i - 1;
-            current = ints[i];
-            while (preIndex >= 0 && compare(ints[preIndex],current)){
-                ints[preIndex + 1] = ints[preIndex];
+            current = arr[i];
+            while (preIndex >= 0 && compare(arr[preIndex],current)){
+                arr[preIndex + 1] = arr[preIndex];
                 preIndex --;
             }
-            ints[preIndex + 1] = current;
+            arr[preIndex + 1] = current;
         }
     }
 }

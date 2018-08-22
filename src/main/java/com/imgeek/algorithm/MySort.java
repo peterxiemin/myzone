@@ -12,7 +12,7 @@ public abstract class MySort {
         return this.sort;
     }
 
-    public abstract void sort(int[] ints);
+    public abstract void sort(int[] arr);
 
     public boolean compare(int a,int b){
         return this.sort == Sort.ASC ? a > b : a < b;
