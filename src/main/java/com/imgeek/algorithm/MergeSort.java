@@ -18,15 +18,15 @@ public class MergeSort extends MySort {
         mergeSort(arr, 0, arr.length - 1);
     }
 
-    private void mergeSort(int[] ints, int low, int high) {
+    private void mergeSort(int[] arr, int low, int high) {
         int middle = (low + high) / 2;
         if (low < high) {
 
-            mergeSort(ints, low, middle);
+            mergeSort(arr, low, middle);
 
-            mergeSort(ints, middle + 1, high);
+            mergeSort(arr, middle + 1, high);
 
-            merge(ints, low, middle, high);
+            merge(arr, low, middle, high);
         }
     }
 
