@@ -37,9 +37,9 @@ public class MergeSort extends MySort{
         while (_left <= middle && _right <= high){
 
             if(compare(ints[_left],ints[_right])){
-                temp[index++] = ints[_left++];
-            }else {
                 temp[index++] = ints[_right++];
+            }else {
+                temp[index++] = ints[_left++];
             }
         }
         while (_left <= middle){
