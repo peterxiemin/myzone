@@ -9,14 +9,6 @@ import java.util.Arrays;
  * @create 2018-08-11
  */
 public class AdapterPattern {
-
-    public static void main(String[] args){
-
-        ElectricCompary electricCompary = new ElectricCompary();
-
-        Computer computer = new Computer();
-        computer.play(new ElectricAdapter(electricCompary));
-    }
 }
 
 /**
