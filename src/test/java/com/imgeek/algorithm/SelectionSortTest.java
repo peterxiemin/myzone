@@ -3,8 +3,6 @@ package com.imgeek.algorithm;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.sound.midi.Soundbank;
-
 import static org.junit.Assert.*;
 
 public class SelectionSortTest extends SortTest {
