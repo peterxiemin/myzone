@@ -1,5 +1,6 @@
 package com.imgeek.locks;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -16,8 +17,8 @@ import java.util.concurrent.TimeUnit;
  * desc:    基于zookeeper实现的分布式锁
  */
 
+@Slf4j
 public class MyZookeeperLock implements DistributedLock {
-    private static final Logger log = LoggerFactory.getLogger(MyZookeeperLock.class);
     private ZooKeeper zooKeeper;
     private final String rootPath = "/dislock";
     private final String preNodeName = "lock-";
@@ -42,7 +43,7 @@ public class MyZookeeperLock implements DistributedLock {
         while (true) {
             List<String> childNodeNames = getSortedChildNodeNames();
             int index = getSelfIndexofChildrenNodeNames(childNodeNames, currentNodeName);
-            log("currentNode : ".concat(currentNodeName).concat(" index : ").concat(String.valueOf(index)));
+            log.debug("currentNode : ".concat(currentNodeName).concat(" index : ").concat(String.valueOf(index)));
             if (index <= 0) {
                 break;
             } else {
@@ -51,17 +52,17 @@ public class MyZookeeperLock implements DistributedLock {
                 final CountDownLatch latch = new CountDownLatch(1);
                 final Watcher previousListener = new Watcher() {
                     public void process(WatchedEvent event) {
-                        log("fire Event1 : ".concat(event.getType().toString()));
+                        log.debug("fire Event1 : ".concat(event.getType().toString()));
                         if (event.getType() == Event.EventType.NodeDeleted) {
                             latch.countDown();
-                            log("fire Event2 : ".concat(event.getType().toString()));
+                            log.debug("fire Event2 : ".concat(event.getType().toString()));
                         }
                     }
                 };
-                log("WholePreNodeName : ".concat(rootPath).concat("/").concat(preNodeName));
+                log.debug("WholePreNodeName : ".concat(rootPath).concat("/").concat(preNodeName));
                 zooKeeper.exists(rootPath.concat("/").concat(preNodeName), previousListener);
                 latch.await();
-                log("".concat("preNodeName :".concat(preNodeName)).concat(" awit"));
+                log.debug("".concat("preNodeName :".concat(preNodeName)).concat(" awit"));
             }
         }
     }
@@ -78,16 +79,16 @@ public class MyZookeeperLock implements DistributedLock {
 
     @Override
     public void unlock() {
-        log("unlock :".concat(currentNodeName));
+        log.debug("unlock :".concat(currentNodeName));
         if (!currentNodeName.isEmpty()) {
             try {
                 Stat stat = zooKeeper.exists(rootPath.concat("/").concat(currentNodeName), false);
                 if (stat != null) {
-                    log("delete : ".concat(rootPath).concat("/").concat(currentNodeName));
+                    log.debug("delete : ".concat(rootPath).concat("/").concat(currentNodeName));
                     zooKeeper.delete(rootPath.concat("/").concat(currentNodeName), -1);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
     }
@@ -144,16 +145,7 @@ public class MyZookeeperLock implements DistributedLock {
             zooKeeper.create(rootPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
         String createRet = zooKeeper.create(rootPath.concat("/").concat(preNodeName), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-        log("create : ".concat(createRet));
+        log.debug("create : ".concat(createRet));
         return createRet.substring(createRet.lastIndexOf("/") + 1, createRet.length());
-    }
-
-    /**
-     * 记录日志
-     *
-     * @param msg
-     */
-    public static void log(String msg) {
-        System.out.println(msg);
     }
 }

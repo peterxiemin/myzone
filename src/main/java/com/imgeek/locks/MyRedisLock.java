@@ -6,6 +6,7 @@ package com.imgeek.locks;
  * desc:    redis分布式锁
  */
 
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -88,6 +89,7 @@ class RedisUtil {
     }
 }
 
+@Slf4j
 class MyRedisLock implements DistributedLock {
 
 
@@ -149,18 +151,9 @@ class MyRedisLock implements DistributedLock {
     public void unlock() {
         String val = redisUtil.get(key);
         if (val != null && val.equalsIgnoreCase(this.val)) {
-            log("del val: " + this.val);
+            log.debug("del val: " + this.val);
             redisUtil.del(key);
         }
-        log("only unlock what self thread create lock");
-    }
-
-    /**
-     * 打印线程号和内容
-     *
-     * @param msg
-     */
-    private void log(String msg) {
-        System.out.println("thread-" + currentThread().getId() + " msg: " + msg);
+        log.debug("only unlock what self thread create lock");
     }
 }

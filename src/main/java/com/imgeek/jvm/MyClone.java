@@ -43,7 +43,7 @@ class Thing implements Cloneable {
     private DepObj depObj;
 
     public Thing() {
-        log.info("construct");
+        log.debug("construct");
     }
 
     public int getI() {

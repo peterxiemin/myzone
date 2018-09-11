@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class Parent {
-    private final static Logger log = LoggerFactory.getLogger(Parent.class);
     public String str;
 
     public Parent(String str) {
@@ -21,7 +20,6 @@ class Parent {
 }
 
 class Child extends Parent {
-    private final static Logger log = LoggerFactory.getLogger(Child.class);
     private String str;
 
     public Child(String str) {

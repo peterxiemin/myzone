@@ -1,77 +1,221 @@
 package com.imgeek.algorithm;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
+
 /**
  * auth:    xiemin
  * date:    2018-08-05
- * desc:    最小堆
+ * desc:    堆
  */
 
+@FunctionalInterface
+interface MyComparable<T> {
+    boolean compare(T o1, T o2);
+}
+
+@Slf4j
 public class MyHeap<T> {
     private T[] heap;
 
-    public MyHeap(T[] arr) {
-        this.heap = arr;
+    private MyComparable<T> comparable;
+
+    public MyHeap(MyComparable<T> comparable) {
+        this.comparable = comparable;
     }
 
-    private T heapRoot() {
+    public T get(int index) {
+        return index < size() ? heap[index] : null;
+    }
+
+    public T heapRoot() {
         return heap[heapRootIndex()];
     }
 
-    private int heapRootIndex() {
+    public int heapRootIndex() {
         return size() > 0 ? 0 : -1;
     }
 
-    private int size() {
+    public T heapTail() {
+        return heap[heap.length - 1];
+    }
+
+    public int heapTailIndex() {
+        return size() > 0 ? heap.length - 1 : -1;
+    }
+
+    public int size() {
         if (heap != null && heap.length > 0) {
             return heap.length;
         }
-        throw new RuntimeException("heap is null or heap size is zero");
+        log.debug("heap is null or heap size is zero");
+        return 0;
     }
 
-    private T childLeft(int index) {
+    public int childLeftIndex(int index) {
+        int newIndex = index * 2 + 1;
+        if (newIndex >= size()) {
+            return -1;
+        }
+        return newIndex;
+    }
+
+    public T childLeft(int index) {
         int leftIndex = childLeftIndex(index);
-        return leftIndex <= size() ? heap[leftIndex] : null;
+        return leftIndex != -1 ? heap[leftIndex] : null;
     }
 
-    private T childRight(int index) {
+    public int childRightIndex(int index) {
+        int newIndex = index * 2 + 2;
+        if (newIndex >= size()) {
+            return -1;
+        }
+        return newIndex;
+    }
+
+    public T childRight(int index) {
         int rightIndex = childRightIndex(index);
-        return rightIndex <= size() ? heap[rightIndex] : null;
+        return rightIndex != -1 ? heap[rightIndex] : null;
     }
 
-    private int childLeftIndex(int index) {
-        return index * 2 + 1;
+    public int parentIndex(int index) {
+        int newIndex = (index - 1) / 2;
+        if (newIndex < 0 || newIndex >= size() || index == 0) {
+            return -1;
+        }
+        return newIndex;
     }
 
-    private int childRightIndex(int index) {
-        return index * 2 + 2;
-    }
-
-    private T parent(int index) {
+    public T parent(int index) {
         int parentIndex = (index - 1) / 2;
-        return parentIndex > 0 && parentIndex <= size() ? heap[parentIndex] : null;
+        return parentIndex != -1 ? heap[parentIndex] : null;
     }
 
-    private void exchangeBetweenParentAndChild(int parentIndex, int childIndex) {
-        if (((parentIndex * 2) + 1) != childIndex && ((parentIndex * 2) + 2) != childIndex) {
-            throw new RuntimeException("the releation between parent and child is invaild");
+    private void recurParentExchangeBetweenParentAndChild(int parentIndex, int childIndex) {
+        if (parentIndex != parentIndex(childIndex)
+                && childIndex != childLeftIndex(parentIndex)
+                && childIndex != childRightIndex(parentIndex)) {
+            log.debug("relation of parent and child is invaild");
+            return;
         }
-        if (parentIndex > size() || childIndex > size()) {
-            throw new RuntimeException("index over limit");
+
+        if (checkOverLimit(parentIndex) || checkOverLimit(childIndex)) {
+            log.debug("arr over limit");
+            return;
         }
-        T tem = heap[parentIndex];
-        heap[parentIndex] = heap[childIndex];
-        heap[childIndex] = tem;
+
+        if (comparable.compare(heap[parentIndex], heap[childIndex])) {
+            changeData(parentIndex, childIndex);
+        }
+
+        int newParentIndex = parentIndex(parentIndex);
+        int newChildIndex = parentIndex;
+        recurParentExchangeBetweenParentAndChild(newParentIndex, newChildIndex);
     }
 
-    public T[] buildHeapFromArray(int[] arr) {
-        return null;
+    private void recurChildExchangeBetweenParentAndChild(int parentIndex) {
+        int LEFT = 0;
+        int RIGHT = 1;
+
+        T current = get(parentIndex);
+        //获取左子树
+        int childLeftIndex = childLeftIndex(parentIndex);
+        T childLeft = childLeft(parentIndex);
+
+        //获取右子树
+        int childRightIndex = childRightIndex(parentIndex);
+        T childRight = childRight(parentIndex);
+
+        int leftOrRigth;
+        if (childLeft == null && childRight == null) {
+            return;
+        } else if (childRight == null) {
+            leftOrRigth = LEFT;
+        } else {
+            if (comparable.compare(childLeft, childRight)) {
+                leftOrRigth = RIGHT;
+            } else {
+                leftOrRigth = LEFT;
+            }
+        }
+
+        if (leftOrRigth == LEFT && comparable.compare(current, childLeft)) {
+            changeData(parentIndex, childLeftIndex);
+            recurChildExchangeBetweenParentAndChild(childLeftIndex);
+        }
+
+        if (leftOrRigth == RIGHT && comparable.compare(current, childRight)) {
+            changeData(parentIndex, childRightIndex);
+            recurChildExchangeBetweenParentAndChild(childRightIndex);
+        }
     }
 
     /**
+     * 插入新数据，重新调整堆
      * insert data
+     *
      * @param data
      */
-    private void insertNode(T data) {
+    public void insertNode(T data) {
+        if (size() > 0) {
+            int newSize = heap.length + 1;
+            int lastIndex = newSize - 1;
+            int parentOfLastestIndex = parentIndex(lastIndex);
+            heap = Arrays.copyOf(heap, heap.length + 1);
+            heap[lastIndex] = data;
+            recurParentExchangeBetweenParentAndChild(parentOfLastestIndex, lastIndex);
+        } else {
+            heap = (T[]) new Object[1];
+            heap[0] = data;
+        }
+    }
 
+    public T extract() {
+        T root = heapRoot();
+        int rootIndex = heapRootIndex();
+        int tailIndex = heapTailIndex();
+        changeData(rootIndex, tailIndex);
+        /**
+         * 清除最后一个叶子节点
+         */
+        heap = Arrays.copyOf(heap, heap.length - 1);
+        /**
+         * 重新调整堆
+         */
+        recurChildExchangeBetweenParentAndChild(rootIndex);
+        log.debug("root: ".concat(String.valueOf(root)));
+        return root;
+    }
+
+    private int changeData(int idx1, int idx2) {
+        if (checkOverLimit(idx1) || checkOverLimit(idx2)) {
+            log.debug("arr over limit");
+            return -1;
+        }
+        T o = heap[idx1];
+        heap[idx1] = heap[idx2];
+        heap[idx2] = o;
+        return 0;
+    }
+
+    /**
+     * 判断索引是否越界
+     *
+     * @param index
+     * @return
+     */
+    private boolean checkOverLimit(int index) {
+        return (index == -1 || index >= size()) ? true : false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < size(); i++) {
+            sb.append(heap[i]);
+            sb.append(",");
+        }
+        return sb.substring(0, sb.length() - 1);
     }
 }
