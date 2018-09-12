@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public class MyHeapTest {
     MyHeap<Integer> myHeap;
-    private static int SIZE = 10;
+    private static int SIZE = 100;
     private static int ZERO = 0;
     MyComparable<Integer> myComparable;
 

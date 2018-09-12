@@ -114,10 +114,11 @@ public class MyHeap<T> {
         recurParentExchangeBetweenParentAndChild(newParentIndex, newChildIndex);
     }
 
-    private void recurChildExchangeBetweenParentAndChild(int parentIndex) {
-        int LEFT = 0;
-        int RIGHT = 1;
+    private enum RecurDirect {
+        LEFT, RIGHT
+    }
 
+    private void recurChildExchangeBetweenParentAndChild(int parentIndex) {
         T current = get(parentIndex);
         //获取左子树
         int childLeftIndex = childLeftIndex(parentIndex);
@@ -127,25 +128,25 @@ public class MyHeap<T> {
         int childRightIndex = childRightIndex(parentIndex);
         T childRight = childRight(parentIndex);
 
-        int leftOrRigth;
+        RecurDirect leftOrRigth;
         if (childLeft == null && childRight == null) {
             return;
         } else if (childRight == null) {
-            leftOrRigth = LEFT;
+            leftOrRigth = RecurDirect.LEFT;
         } else {
             if (comparable.compare(childLeft, childRight)) {
-                leftOrRigth = RIGHT;
+                leftOrRigth = RecurDirect.RIGHT;
             } else {
-                leftOrRigth = LEFT;
+                leftOrRigth = RecurDirect.LEFT;
             }
         }
 
-        if (leftOrRigth == LEFT && comparable.compare(current, childLeft)) {
+        if (leftOrRigth == RecurDirect.LEFT && comparable.compare(current, childLeft)) {
             changeData(parentIndex, childLeftIndex);
             recurChildExchangeBetweenParentAndChild(childLeftIndex);
         }
 
-        if (leftOrRigth == RIGHT && comparable.compare(current, childRight)) {
+        if (leftOrRigth == RecurDirect.RIGHT && comparable.compare(current, childRight)) {
             changeData(parentIndex, childRightIndex);
             recurChildExchangeBetweenParentAndChild(childRightIndex);
         }
