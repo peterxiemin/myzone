@@ -107,11 +107,10 @@ public class MyHeap<T> {
 
         if (comparable.compare(heap[parentIndex], heap[childIndex])) {
             changeData(parentIndex, childIndex);
+            int newParentIndex = parentIndex(parentIndex);
+            int newChildIndex = parentIndex;
+            recurParentExchangeBetweenParentAndChild(newParentIndex, newChildIndex);
         }
-
-        int newParentIndex = parentIndex(parentIndex);
-        int newChildIndex = parentIndex;
-        recurParentExchangeBetweenParentAndChild(newParentIndex, newChildIndex);
     }
 
     private enum RecurDirect {
