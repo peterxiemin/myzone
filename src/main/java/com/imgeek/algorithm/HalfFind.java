@@ -15,7 +15,7 @@ public class HalfFind {
     }
 
     public int find(int[] arr, int key) {
-       return find(arr, key, 0, arr.length - 1);
+        return find(arr, key, 0, arr.length - 1);
     }
 
     /**
@@ -29,33 +29,25 @@ public class HalfFind {
         /**
          * 判断是否是有序数组
          */
-        if (!isSorted(arr)) {
+        if (!isSorted(arr, start, end)) {
             throw new NumberFormatException("not sorted array");
         }
 
-        int half = (start + end) / 2;
-
-        if ((start + 1) == end) {
-            if (arr[start] == key) {
-                return start;
-            } else if (arr[end] == key) {
-                return end;
-            } else {
-                return -1;
-            }
+        if (start > end) {
+            return -1;
         }
-
+        int half = (start + end) / 2;
         if (sorted == 0) { //正序
             if (key > arr[half])
-                return find(arr, key, half, end);
+                return find(arr, key, half + 1, end);
             else if (key < arr[half])
-                return find(arr, key, start, half);
+                return find(arr, key, start, half - 1);
         }
         if (sorted == 1) { //逆序
             if (key < arr[half])
-                return find(arr, key, half, end);
+                return find(arr, key, half + 1, end);
             else if (key > arr[half])
-                return find(arr, key, start, half);
+                return find(arr, key, start, half - 1);
         }
         return half;
     }
@@ -68,6 +60,24 @@ public class HalfFind {
      */
     private boolean isSorted(int[] arr) {
         for (int i = 0; i < arr.length - 1; i++) {
+            if (sorted == 1 && arr[i] < arr[i + 1]) {
+                return false;
+            }
+            if (sorted == 0 && arr[i] > arr[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断数组是否有序 sorted = 0: 正序 sorted = 1: 逆序
+     *
+     * @param arr
+     * @return
+     */
+    private boolean isSorted(int[] arr, int start, int end) {
+        for (int i = start; i < end - 1; i++) {
             if (sorted == 1 && arr[i] < arr[i + 1]) {
                 return false;
             }
