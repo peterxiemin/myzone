@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
  *  date:   2018-07-28
  */
 
-public class FastJson implements JsonUtilinterface {
+public class FastJson implements IJsonUtil {
     @Override
     public Object encode(String arg) {
         return JSONObject.parseObject(arg);

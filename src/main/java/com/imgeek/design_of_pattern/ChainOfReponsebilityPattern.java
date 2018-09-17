@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * autor:   xiemin
  * date:    2018-07-16
@@ -36,31 +38,34 @@ abstract class IHandler {
     }
 }
 
+@Slf4j
 class Husband extends IHandler {
 
     @Override
     public void handleMessage() {
-        System.out.println("I am a husband");
+        log.info("I am a husband");
         if (_iHandlerNext != null) {
             _iHandlerNext.handleMessage();
         }
     }
 }
 
+@Slf4j
 class Father extends IHandler {
     @Override
     public void handleMessage() {
-        System.out.println("I am a Father");
+        log.info("I am a Father");
         if (_iHandlerNext != null) {
             _iHandlerNext.handleMessage();
         }
     }
 }
 
+@Slf4j
 class Son extends IHandler {
     @Override
     public void handleMessage() {
-        System.out.println("I am a Son");
+        log.info("I am a Son");
         if (_iHandlerNext != null) {
             _iHandlerNext.handleMessage();
         }

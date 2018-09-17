@@ -1,8 +1,7 @@
 package com.imgeek.thread;
 
 import com.imgeek.jvm.MyFunctionInterface;
-
-import java.util.concurrent.CountDownLatch;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * auth:    xiemin
@@ -24,10 +23,9 @@ class Thread2 extends Thread {
     }
 }
 
-
+@Slf4j
 public class MyThread extends Thread {
     private MyFunctionInterface functionInterface;
-    private CountDownLatch countDownLatch;
     private WaitingQueue<?> waitingQueue;
 
     public MyThread(MyFunctionInterface functionInterface)
@@ -35,18 +33,14 @@ public class MyThread extends Thread {
         this.functionInterface = functionInterface;
     }
 
-    public void countDwon() {
-        countDownLatch.countDown();
-    }
 
     @Override
     public void run() {
-        functionInterface.apply();
-        countDwon();
-    }
-
-    public void setCountDownLatch(CountDownLatch countDownLatch) {
-        this.countDownLatch = countDownLatch;
+        try {
+            functionInterface.apply();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     public void setWaitingQueue(WaitingQueue<?> waitingQueue) {

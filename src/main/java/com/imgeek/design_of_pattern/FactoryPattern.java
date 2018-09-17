@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * auth:    xiemin
  * date:    2018-07-28
@@ -10,11 +12,12 @@ abstract class Product {
     public abstract void method();
 }
 
+@Slf4j
 class ConcreteProduct extends Product {
 
     @Override
     public void method() {
-        System.out.println("I am ConcreteProduct");
+        log.info("I am ConcreteProduct");
     }
 }
 

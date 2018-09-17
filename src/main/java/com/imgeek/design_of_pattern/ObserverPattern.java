@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +21,12 @@ interface Observer {
    void update(String context);
 }
 
+@Slf4j
 class Lisi implements Observer{
 
     @Override
     public void update(String context) {
-        System.out.println("lisi 观察到：".concat(context));
+        log.info("lisi 观察到：".concat(context));
     }
 }
 

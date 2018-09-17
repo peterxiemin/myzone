@@ -90,10 +90,7 @@ class RedisUtil {
 }
 
 @Slf4j
-class MyRedisLock implements DistributedLock {
-
-
-    private JedisPool pool;
+class MyRedisLock implements IDistributedLock {
     private String key;
     private String val;
     private int expire;
@@ -107,6 +104,16 @@ class MyRedisLock implements DistributedLock {
         this.expire = expire;
     }
 
+    public MyRedisLock() {
+        /**
+         * todo做成可配置化的
+         */
+        this.redisUtil = new RedisUtil("10.0.1.9", 6379, 2000, "ruck523.Erin");
+        this.key = "key";
+        this.val = "val_".concat(String.valueOf(Thread.currentThread()));
+        this.expire = 2;
+    }
+
     /**
      * todo 如果网络异常等情况，线程会一直锁死,需要在循环中加入超时
      * 阻塞加锁(悲观锁)
@@ -118,7 +125,7 @@ class MyRedisLock implements DistributedLock {
                 break;
             } else {
                 try {
-                    sleep(500);
+                    sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
