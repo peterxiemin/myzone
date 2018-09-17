@@ -9,18 +9,12 @@ public class HalfFindTest {
 
     private int size = 10;
     private int[] arr = new int[size];
-    QuickSort quickSort;
     HalfFind halfFind;
     private int sorted = 0;
 
     @Before
     public void setUp() throws Exception {
-        quickSort = new QuickSort(MySort.Sort.ASC);
         halfFind = new HalfFind(sorted);
-        for (int i = 0; i < size; i++) {
-            arr[i] = (int) (Math.random() * size);
-        }
-        quickSort.sort(arr);
     }
 
     @Test
@@ -51,5 +45,15 @@ public class HalfFindTest {
     public void find5() {
         int[] arr = new int[]{0,1,2,6,7,7,7,8,9,9};
         assertEquals(-1, halfFind.find(arr, 10));
+    }
+
+    @Test
+    public void find6() {
+        int[] arr = new int[]{0,1,2,6,7,7,8,10,9,9};
+        try {
+            halfFind.find(arr, 8);
+        } catch (NumberFormatException e) {
+            assertEquals("not sorted array", e.getMessage());
+        }
     }
 }
