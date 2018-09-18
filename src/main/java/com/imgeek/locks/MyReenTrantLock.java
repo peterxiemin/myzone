@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 
-public class MyReenTrantLock implements IMyLock {
+public class MyReenTrantLock implements ILocalLock {
     private ReentrantLock reentrantLock;
 
     private Condition condition;
@@ -40,8 +40,8 @@ public class MyReenTrantLock implements IMyLock {
     }
 
     @Override
-    public void lock(long startmillis, TimeUnit timeUnit) throws Exception {
-        reentrantLock.tryLock(startmillis, timeUnit);
+    public boolean lock(long startmillis, TimeUnit timeUnit) throws Exception {
+        return reentrantLock.tryLock(startmillis, timeUnit);
     }
 
     @Override
@@ -54,10 +54,12 @@ public class MyReenTrantLock implements IMyLock {
         reentrantLock.unlock();
     }
 
+    @Override
     public void await() throws InterruptedException {
         condition.await();
     }
 
+    @Override
     public void signalAll() {
         condition.signalAll();
     }

@@ -148,8 +148,8 @@ class MyRedisLock implements IDistributedLock {
      * @param startmillis 开始时间戳
      * @param timeUnit
      */
-    public void lock(long startmillis, TimeUnit timeUnit) {
-
+    public boolean lock(long startmillis, TimeUnit timeUnit) {
+        return true;
     }
 
     /**
