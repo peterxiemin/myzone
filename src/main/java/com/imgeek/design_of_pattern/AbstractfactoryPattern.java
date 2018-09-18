@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 功能描述: 抽象工厂模式
  *
@@ -28,48 +30,52 @@ interface Phone {
 /**
  * 功能描述: 具体产品(安卓充电器)
  */
+@Slf4j
 class AndroidCharger implements Charger {
 
     @Override
     public void chargerMessage() {
 
-        System.out.println("这是安卓手机充电器.");
+        log.info("这是安卓手机充电器.");
     }
 }
 
 /**
  * 功能描述: 具体产品(安卓手机)
  */
+@Slf4j
 class AndroidPhone implements Phone {
 
     @Override
     public void phoneMessage() {
 
-        System.out.println("这是安卓手机.");
+        log.info("这是安卓手机.");
     }
 }
 
 /**
  * 功能描述: 具体产品(ios充电器)
  */
+@Slf4j
 class IOSCharger implements Charger {
 
     @Override
     public void chargerMessage() {
 
-        System.out.println("这是苹果手机充电器");
+        log.info("这是苹果手机充电器");
     }
 }
 
 /**
  * 功能描述: 具体产品(ios手机)
  */
+@Slf4j
 class IOSPhone implements Phone {
 
     @Override
     public void phoneMessage() {
 
-        System.out.println("这是苹果手机.");
+        log.info("这是苹果手机.");
     }
 }
 

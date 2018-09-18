@@ -6,6 +6,11 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author： xiemin
+ * @date:    2018-09-17
+ */
+
 public class MyThreadTest {
     private static int step = 0;
     @Test
@@ -16,9 +21,9 @@ public class MyThreadTest {
             MyThread myThread = new MyThread(
                     () -> {
                         ++step;
+                        countDownLatch.countDown();
                     }
             );
-            myThread.setCountDownLatch(countDownLatch);
             myThread.start();
         }
         try {

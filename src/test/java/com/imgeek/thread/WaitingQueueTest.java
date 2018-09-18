@@ -6,6 +6,11 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author： xiemin
+ * @date:    2018-09-17
+ */
+
 public class WaitingQueueTest {
     WaitingQueue<Integer> waitingQueue = new WaitingQueue<>();
 
@@ -19,9 +24,9 @@ public class WaitingQueueTest {
                         waitingQueue.push(1);
                         waitingQueue.push(1);
                         waitingQueue.pop();
+                        countDownLatch.countDown();
                     }
             );
-            myThread.setCountDownLatch(countDownLatch);
             myThread.setWaitingQueue(waitingQueue);
             myThread.start();
         }

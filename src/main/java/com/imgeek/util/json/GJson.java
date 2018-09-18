@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  *  date:   2018-07-28
  */
 
-public class GJson implements JsonUtilinterface {
+public class GJson implements IJsonUtil {
     private final Gson gson = new Gson();
     @Override
     public Object encode(String arg) {

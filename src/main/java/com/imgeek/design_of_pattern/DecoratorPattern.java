@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * auth: xiemin
  * date: 2018-08-04
@@ -10,11 +12,12 @@ abstract class Component {
     public abstract void operation();
 }
 
+@Slf4j
 class ConcreateComponent extends Component {
 
     @Override
     public void operation() {
-        System.out.println("hello world");
+        log.info("hello world");
     }
 }
 
@@ -25,6 +28,7 @@ abstract class Decorator extends Component {
     }
 }
 
+@Slf4j
 class ConcreateDecorator extends Decorator {
 
     public ConcreateDecorator(Component component) {
@@ -33,7 +37,7 @@ class ConcreateDecorator extends Decorator {
 
     @Override
     public void operation() {
-        System.out.println("I am a Concreate");
+        log.info("I am a Concreate");
         _component.operation();
     }
 }

@@ -15,7 +15,7 @@ import java.util.*;
  * desc:   org.json android java 原生json编码工具封装
  */
 
-public class OrgJson implements JsonUtilinterface {
+public class OrgJson implements IJsonUtil {
 
     private Logger log = LoggerFactory.getLogger(OrgJson.class);
 

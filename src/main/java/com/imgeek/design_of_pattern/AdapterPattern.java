@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 
 /**
@@ -60,12 +62,13 @@ class ElectricAdapter implements DirectCurrent{
     }
 }
 
+@Slf4j
 class Computer {
 
     public void play(DirectCurrent dc){
 
         byte[] array = dc.getDC();
-        System.out.println("使用直流电:" + Arrays.toString(array));
+        log.info("使用直流电:" + Arrays.toString(array));
     }
 }
 

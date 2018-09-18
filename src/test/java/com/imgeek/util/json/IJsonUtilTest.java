@@ -56,7 +56,7 @@ class TestClass {
     }
 }
 
-public class JsonUtilinterfaceTest {
+public class IJsonUtilTest {
     @Test
     public void orgJsonEncodeLong() throws InstantiationException, IllegalAccessException {
         String str = "{\"id\":100000002668344,\"batchId\":56,\"datas\":\"xxxx\"}";

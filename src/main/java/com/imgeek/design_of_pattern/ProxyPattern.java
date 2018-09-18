@@ -1,5 +1,7 @@
 package com.imgeek.design_of_pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * author:  xiemin
  * date:    2017-07-14
@@ -10,6 +12,7 @@ interface IGamePlayer {
     void killBoss();
 }
 
+@Slf4j
 class GamerPlayer implements IGamePlayer {
     private String _name;
 
@@ -19,10 +22,11 @@ class GamerPlayer implements IGamePlayer {
 
     @Override
     public void killBoss() {
-        System.out.println("kill Boss");
+        log.info("kill Boss");
     }
 }
 
+@Slf4j
 class GamerPlayerProxy implements IGamePlayer {
     private GamerPlayer gamerPlayer;
 
@@ -38,11 +42,11 @@ class GamerPlayerProxy implements IGamePlayer {
     }
 
     public void preHandler() {
-        System.out.println("preHandler");
+        log.info("preHandler");
     }
 
     public void afterHandler() {
-        System.out.println("afterHandler");
+        log.info("afterHandler");
     }
 }
 

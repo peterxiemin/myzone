@@ -3,8 +3,6 @@ package com.imgeek.locks;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Slf4j
-public class MyZookeeperLock implements DistributedLock {
+public class MyZookeeperLock implements IDistributedLock {
     private ZooKeeper zooKeeper;
     private final String rootPath = "/dislock";
     private final String preNodeName = "lock-";
@@ -26,6 +24,18 @@ public class MyZookeeperLock implements DistributedLock {
 
     public MyZookeeperLock(String host, int sessionTimeout, Watcher watcher) throws IOException, KeeperException, InterruptedException {
         zooKeeper = new ZooKeeper(host, sessionTimeout, watcher);
+        init();
+    }
+
+    /**
+     * todo
+     * 暂时写死，日后通过配置文件或者配置类实现
+     * @throws IOException
+     * @throws KeeperException
+     * @throws InterruptedException
+     */
+    public MyZookeeperLock() throws IOException, KeeperException, InterruptedException {
+        zooKeeper = new ZooKeeper("10.0.1.9:2181", 8000, null);
         init();
     }
 

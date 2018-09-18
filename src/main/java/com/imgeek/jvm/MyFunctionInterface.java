@@ -14,5 +14,5 @@ package com.imgeek.jvm;
 
 @FunctionalInterface
 public interface MyFunctionInterface {
-    void apply();
+    void apply() throws Exception;
 }

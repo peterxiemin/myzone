@@ -1,14 +1,14 @@
 package com.imgeek.locks;
 
-/**
- * auth:    xiemin
- * date:    2018-07-19
- * desc:    分布式锁接口
- */
-
 import java.util.concurrent.TimeUnit;
 
-public interface DistributedLock {
+/**
+ * auth:    xiemin
+ * date:    2018-09-17
+ * desc:    锁接口
+ */
+
+public interface IMyLock {
     /**
      * 阻塞锁
      */

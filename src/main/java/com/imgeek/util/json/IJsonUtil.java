@@ -5,7 +5,7 @@ package com.imgeek.util.json;
  *  date:   2018-07-28
  */
 
-public interface JsonUtilinterface {
+public interface IJsonUtil {
     public Object encode(String arg);
 
     public <T> T encode(String arg, Class<T> type) throws IllegalAccessException, InstantiationException;
