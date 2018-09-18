@@ -6,6 +6,8 @@ package com.imgeek.algorithm;
  * @desc: 二叉树
  */
 
+import java.util.Stack;
+
 /**
  * 二叉树中的节点定义
  *
@@ -158,21 +160,58 @@ public class BitTree<T> {
 
     public int bitTreeSize() {
         size = 0;
-        traverse(bitTreeRoot());
+        PreOrderTraverse(bitTreeRoot());
         return size;
     }
 
     /**
-     * 二叉树的递归遍历
+     * 二叉树先序递归遍历
      *
      * @param bitNode
      */
-    public void traverse(BitNode<T> bitNode) {
+    public void PreOrderTraverse(BitNode<T> bitNode) {
         size++;
         if (isLeafOfBitTree(bitNode)) return;
         if (bitNode.getLeft() != null)
-            traverse(bitNode.getLeft());
+            PreOrderTraverse(bitNode.getLeft());
         if (bitNode.getRight() != null)
-            traverse(bitNode.getRight());
+            PreOrderTraverse(bitNode.getRight());
+    }
+
+    /**
+     * 二叉树非递归中序遍历
+     *
+     * @param bitNode
+     */
+    public String InOrderTraverseUsingStack(BitNode<T> bitNode) {
+        String result = "";
+        Stack<BitNode> stack = new Stack<BitNode>();
+        if (bitNode == null)
+            return "";
+        stack.push(bitNode);
+
+        BitNode cur = bitNode.getLeft();
+        while (cur != null) {
+            stack.push(cur);
+            cur = cur.getLeft();
+        }
+
+        while (!stack.isEmpty()) {
+            cur = stack.pop();
+            result += visit(cur);
+            cur = cur.getRight();
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.getLeft();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 二叉树遍历时对每个节点的操作
+     */
+    private String visit(BitNode<T> bitNode) {
+        return bitNode.getData() + " ";
     }
 }

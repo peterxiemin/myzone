@@ -41,4 +41,14 @@ public class BitTreeTest {
         BitTree<Integer> bitTree3 = bitTreeUtil.bitTreeMerge(bitTree1, bitTree2);
         assertEquals(SIZE, bitTree3.bitTreeSize());
     }
+
+    @Test
+    public void testInOrderTraverseUsingStack(){
+        assertEquals("7 3 8 1 9 4 10 0 11 5 2 6 ", bitTree.InOrderTraverseUsingStack(bitTree.getHead()));
+        assertEquals("3 1 0 2 ", bitTree1.InOrderTraverseUsingStack(bitTree1.getHead()));
+        assertEquals("7 5 8 4 9 6 10 ", bitTree2.InOrderTraverseUsingStack(bitTree2.getHead()));
+    }
+
+
+
 }
