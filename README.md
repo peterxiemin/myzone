@@ -32,7 +32,7 @@
 ### 五、锁
 >1) Redis
 >2) zookeeper
->3) juc锁和条件
+>3) juc锁
 ### 六、网络相关
 ### 七、缓存
 >1) Ehcache
