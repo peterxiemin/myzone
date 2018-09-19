@@ -44,9 +44,9 @@ public class BitTreeTest {
 
     @Test
     public void testInOrderTraverseUsingStack(){
-        assertEquals("7 3 8 1 9 4 10 0 11 5 2 6 ", bitTree.InOrderTraverseUsingStack(bitTree.getHead()));
-        assertEquals("3 1 0 2 ", bitTree1.InOrderTraverseUsingStack(bitTree1.getHead()));
-        assertEquals("7 5 8 4 9 6 10 ", bitTree2.InOrderTraverseUsingStack(bitTree2.getHead()));
+        assertEquals("7 3 8 1 9 4 10 0 11 5 2 6 ", bitTree.inOrderTraverseUsingStack(bitTree.getHead()));
+        assertEquals("3 1 0 2 ", bitTree1.inOrderTraverseUsingStack(bitTree1.getHead()));
+        assertEquals("7 5 8 4 9 6 10 ", bitTree2.inOrderTraverseUsingStack(bitTree2.getHead()));
     }
 
 
