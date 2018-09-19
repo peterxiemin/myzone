@@ -5,7 +5,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CountingSortTest extends SortTest{
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
+public class CountingSortTest extends SortTest {
 
     private CountingSort countingSort;
     private int size = 10000;

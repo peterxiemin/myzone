@@ -2,8 +2,12 @@ package com.imgeek.algorithm;
 
 import org.junit.Before;
 import org.junit.Test;
-
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 import static org.junit.Assert.*;
+
 public class BitTreeTest {
 
     private BitTree<Integer> bitTree;
@@ -12,6 +16,7 @@ public class BitTreeTest {
 
     private BitTreeUtil<Integer> bitTreeUtil;
     private static int SIZE = 12;
+
     @Before
     public void setUp() {
         bitTree = new BitTree<>();
@@ -43,12 +48,11 @@ public class BitTreeTest {
     }
 
     @Test
-    public void testInOrderTraverseUsingStack(){
+    public void testInOrderTraverseUsingStack() {
         assertEquals("7 3 8 1 9 4 10 0 11 5 2 6 ", bitTree.InOrderTraverseUsingStack(bitTree.getHead()));
         assertEquals("3 1 0 2 ", bitTree1.InOrderTraverseUsingStack(bitTree1.getHead()));
         assertEquals("7 5 8 4 9 6 10 ", bitTree2.InOrderTraverseUsingStack(bitTree2.getHead()));
     }
-
 
 
 }

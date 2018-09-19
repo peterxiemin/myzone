@@ -11,11 +11,16 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 @Slf4j
 public class MyThreadLocalTest extends BaseLockTest {
     private MyFunctionInterface myFunctionInterface;
     private Object lock = new Object();
     private MyThreadLocal<Long> myThreadLocal = new MyThreadLocal<>();
+
     @Before
     public void setUp() throws Exception {
         myFunctionInterface = () -> {

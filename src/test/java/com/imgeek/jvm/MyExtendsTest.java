@@ -6,6 +6,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 @Slf4j
 public class MyExtendsTest {
 

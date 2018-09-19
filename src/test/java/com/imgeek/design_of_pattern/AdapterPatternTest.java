@@ -2,6 +2,10 @@ package com.imgeek.design_of_pattern;
 
 import org.junit.Test;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 public class AdapterPatternTest {
 
     @Test

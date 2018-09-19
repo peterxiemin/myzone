@@ -8,22 +8,26 @@ import static org.junit.Assert.*;
 
 /**
  * @author： xiemin
- * @date:    2018-09-17
+ * @date: 2018-09-17
  */
 
 public class MyThreadTest {
-    private static int step = 0;
+    private int step = 0;
+    private int NUM = 10;
+    private Object lock = new Object();
+
     @Test
-    public void demoShow() {
-        int NUM = 10;
+    public void counterTest() {
         CountDownLatch countDownLatch = new CountDownLatch(NUM);
         for (int i = 0; i < NUM; i++) {
             MyThread myThread = new MyThread(
                     () -> {
-                        ++step;
-                        countDownLatch.countDown();
+                        synchronized (lock) {
+                            ++step;
+                        }
                     }
             );
+            myThread.setCountDownLatch(countDownLatch);
             myThread.start();
         }
         try {
