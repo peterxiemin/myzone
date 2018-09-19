@@ -5,6 +5,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 public class HalfFindTest {
 
     private int size = 10;
@@ -31,25 +35,25 @@ public class HalfFindTest {
 
     @Test
     public void find3() {
-        int[] arr = new int[]{0,1,2,6,7,7,7,8,9,9};
+        int[] arr = new int[]{0, 1, 2, 6, 7, 7, 7, 8, 9, 9};
         assertEquals(3, halfFind.find(arr, 6));
     }
 
     @Test
     public void find4() {
-        int[] arr = new int[]{0,1,2,6,7,7,7,8,9,9};
+        int[] arr = new int[]{0, 1, 2, 6, 7, 7, 7, 8, 9, 9};
         assertEquals(-1, halfFind.find(arr, -1));
     }
 
     @Test
     public void find5() {
-        int[] arr = new int[]{0,1,2,6,7,7,7,8,9,9};
+        int[] arr = new int[]{0, 1, 2, 6, 7, 7, 7, 8, 9, 9};
         assertEquals(-1, halfFind.find(arr, 10));
     }
 
     @Test
     public void find6() {
-        int[] arr = new int[]{0,1,2,6,7,7,8,10,9,9};
+        int[] arr = new int[]{0, 1, 2, 6, 7, 7, 8, 10, 9, 9};
         try {
             halfFind.find(arr, 8);
         } catch (NumberFormatException e) {

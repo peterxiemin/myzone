@@ -78,8 +78,8 @@ public class MyZookeeperLock implements IDistributedLock {
     }
 
     @Override
-    public void lock(long startmillis, TimeUnit timeUnit) throws Exception {
-
+    public boolean lock(long startmillis, TimeUnit timeUnit) throws Exception {
+        return true;
     }
 
     @Override

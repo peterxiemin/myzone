@@ -5,10 +5,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 public class HeapSortTest extends SortTest {
     private MySort mySort;
     private static int size = 1000;
     private int[] arr = new int[size];
+
     @Before
     public void setUp() throws Exception {
         for (int i = 0; i < size; i++) {

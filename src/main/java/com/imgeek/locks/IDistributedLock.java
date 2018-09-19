@@ -6,6 +6,6 @@ package com.imgeek.locks;
  * desc:    分布式锁接口
  */
 
-public interface IDistributedLock extends IMyLock{
+public interface IDistributedLock extends IMyLock {
 
 }

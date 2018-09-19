@@ -3,7 +3,11 @@ package com.imgeek.algorithm;
 import org.junit.Before;
 import org.junit.Test;
 
-public class QuickSort2Test extends SortTest{
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
+public class QuickSort2Test extends SortTest {
 
     private MySort quickSort;
     private int size = 1000;

@@ -19,7 +19,7 @@ public interface IMyLock {
      * @param startmillis 开始时间戳
      * @param timeUnit
      */
-    void lock(long startmillis, TimeUnit timeUnit) throws Exception;
+    boolean lock(long startmillis, TimeUnit timeUnit) throws Exception;
 
     /**
      * 非阻塞锁

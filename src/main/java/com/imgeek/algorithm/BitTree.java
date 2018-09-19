@@ -183,7 +183,7 @@ public class BitTree<T> {
      *
      * @param bitNode
      */
-    public String inOrderTraverseUsingStack(BitNode<T> bitNode) {
+    public String InOrderTraverseUsingStack(BitNode<T> bitNode) {
         String result = "";
         Stack<BitNode> stack = new Stack<BitNode>();
         if (bitNode == null)

@@ -8,6 +8,10 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 class TestClass {
     Long id;
     Integer batchId;
@@ -137,6 +141,7 @@ public class IJsonUtilTest {
 
     /**
      * gson内部会将number类型转化为double表示，需要特别注意
+     *
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
@@ -188,6 +193,7 @@ public class IJsonUtilTest {
 
     /**
      * Fastjson 需要类定义增加get和set方法，否则encode会失效
+     *
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
@@ -219,6 +225,7 @@ public class IJsonUtilTest {
 
     /**
      * fastjson内部会将浮点型数字类型使用Bigdecimal表示
+     *
      * @throws InstantiationException
      * @throws IllegalAccessException
      */

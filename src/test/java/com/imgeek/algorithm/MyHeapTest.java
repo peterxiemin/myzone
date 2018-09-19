@@ -9,6 +9,10 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 @Slf4j
 public class MyHeapTest {
     MyHeap<Integer> myHeap;
@@ -41,8 +45,8 @@ public class MyHeapTest {
             list.add(myHeap.extract());
         }
         for (int i = 0; i < list.size() - 1; i++) {
-            log.debug("l1: ".concat(String.valueOf(list.get(i))).concat(" l2: ").concat(String.valueOf(list.get(i+1))));
-            assertFalse(list.get(i) > list.get(i+1));
+            log.debug("l1: ".concat(String.valueOf(list.get(i))).concat(" l2: ").concat(String.valueOf(list.get(i + 1))));
+            assertFalse(list.get(i) > list.get(i + 1));
         }
     }
 

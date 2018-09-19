@@ -1,30 +1,24 @@
 package com.imgeek.jvm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * @author :    xiemin
+ * @date: 2018-09-18
+ */
 
 class Parent {
-    public String str;
-
-    public Parent(String str) {
-        this.str = str;
-    }
+    public String str = "parent";
 
     public String getStr() {
         return str;
     }
 
-    public void setStr(String str) {
-        this.str = str;
+    public String getSelfStr() {
+        return str;
     }
 }
 
 class Child extends Parent {
-    private String str;
-
-    public Child(String str) {
-        super(str);
-    }
+    private String str = "child";
 
     @Override
     public String getStr() {

@@ -7,6 +7,10 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 public class MyBubbTest {
 
     @Test

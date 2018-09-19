@@ -10,8 +10,13 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author :xiemin
+ * @date: 2018-09-19
+ */
 public class MyCloneTest {
     private final static Logger log = LoggerFactory.getLogger(MyCloneTest.class);
+
     @Before
     public void setUp() throws Exception {
     }
@@ -67,7 +72,7 @@ public class MyCloneTest {
         DepObj depObj = new DepObj();
         Thing thing = new Thing();
         thing.setDepObj(depObj);
-        Thing cloneThing  = thing.clone();
+        Thing cloneThing = thing.clone();
         depObj.setA(a);
         assertEquals(a, thing.getDepObj().getA());
         assertEquals(a, cloneThing.getDepObj().getA());
