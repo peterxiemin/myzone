@@ -160,7 +160,7 @@ public class BitTree<T> {
 
     public int bitTreeSize() {
         size = 0;
-        PreOrderTraverse(bitTreeRoot());
+        preOrderTraverse(bitTreeRoot());
         return size;
     }
 
@@ -169,13 +169,13 @@ public class BitTree<T> {
      *
      * @param bitNode
      */
-    public void PreOrderTraverse(BitNode<T> bitNode) {
+    public void preOrderTraverse(BitNode<T> bitNode) {
         size++;
         if (isLeafOfBitTree(bitNode)) return;
         if (bitNode.getLeft() != null)
-            PreOrderTraverse(bitNode.getLeft());
+            preOrderTraverse(bitNode.getLeft());
         if (bitNode.getRight() != null)
-            PreOrderTraverse(bitNode.getRight());
+            preOrderTraverse(bitNode.getRight());
     }
 
     /**
@@ -183,7 +183,7 @@ public class BitTree<T> {
      *
      * @param bitNode
      */
-    public String InOrderTraverseUsingStack(BitNode<T> bitNode) {
+    public String inOrderTraverseUsingStack(BitNode<T> bitNode) {
         String result = "";
         Stack<BitNode> stack = new Stack<BitNode>();
         if (bitNode == null)
