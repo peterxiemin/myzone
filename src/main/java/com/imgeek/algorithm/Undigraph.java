@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * 无向图
- *
+ * <p>
  * 使用邻接表存储
  */
 
@@ -117,17 +117,40 @@ public class Undigraph<T> {
         }
         return result;
     }
+
+    //广度优先遍历
+    public String breadthFirstTraverse() {
+        int nodeNum = getNodeNum();
+        if (nodeNum <= 0) {
+            return "";
+        }
+        boolean[] nodeFlag = new boolean[nodeNum];
+        for (int i = 0; i < nodeNum; i++) {
+            nodeFlag[i] = false;
+        }
+        String result = "";
+        UndigraphNode<T> curNode;
+        Edge<T> curEdge;
+
+        ArrayList<UndigraphNode<T>> visitNodeList = new ArrayList<>();
+        result += nodeList.get(0).getData().toString() + " ";
+        visitNodeList.add(nodeList.get(0));
+        nodeFlag[nodeList.get(0).getNodeIndex()] = true;
+
+        while (visitNodeList.size() > 0) {
+            curNode = visitNodeList.get(0);
+            visitNodeList.remove(0);
+            curEdge = curNode.getFirstEdge();
+            while (curEdge != null) {
+                if (nodeFlag[curEdge.getNode().getNodeIndex()] == false) {
+                    nodeFlag[curEdge.getNode().getNodeIndex()] = true;
+                    result += curEdge.getNode().getData().toString() + " ";
+                    visitNodeList.add(curEdge.getNode());
+                }
+                curEdge = curEdge.getNextEdge();
+            }
+        }
+        return result;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
