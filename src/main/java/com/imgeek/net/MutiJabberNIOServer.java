@@ -211,10 +211,12 @@ class SelectProcess implements Runnable {
     }
 
     private String byteBufferToString(ByteBuffer readByteBuffer) {
-        int i = 0;
+        int i , j;
+        char CR = '\r';
+        char LF = '\n';
         byte[] bytes = readByteBuffer.array();
-        for (; i < bytes.length; i++) {
-            if (bytes[i] == 0) break;
+        for (i = 0, j = 1; i < bytes.length - 1 && j < bytes.length; i++, j++) {
+            if (bytes[i] == CR && bytes[j] == LF) break;
         }
         return (new String(bytes)).substring(0, i);
     }
