@@ -201,10 +201,10 @@ class SelectProcess implements Runnable {
     private int write(SocketChannel socketChannel, ByteBuffer byteBuffer) throws IOException {
         int bytesWriten = 0;
         int totalBytesWriten = bytesWriten;
-        bytesWriten = socketChannel.write(writeByteBuffer);
+        bytesWriten = socketChannel.write(byteBuffer);
         totalBytesWriten += bytesWriten;
         while (bytesWriten > 0) {
-            bytesWriten = socketChannel.write(writeByteBuffer);
+            bytesWriten = socketChannel.write(byteBuffer);
             totalBytesWriten += bytesWriten;
         }
         return totalBytesWriten;
