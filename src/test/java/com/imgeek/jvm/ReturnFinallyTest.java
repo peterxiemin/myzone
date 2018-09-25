@@ -65,4 +65,13 @@ public class ReturnFinallyTest {
             assertEquals("/ by one", e.getMessage());
         }
     }
+
+    @Test
+    public void mustFinally8() {
+        try {
+            int ret = returnFinally.mustFinally8();
+            assertEquals(2, ret);
+        } catch (Exception e) {
+        }
+    }
 }

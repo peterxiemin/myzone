@@ -23,8 +23,8 @@ public class ReturnFinally {
     }
 
     /**
-     * mustFinally4/mustFinally5 证明finally发生在try的return前
-     * 如果有catch，会发生在catch和return之间
+     * try和catch/finally之间后面发生异常，将会跳过所有的try-catch/finally之间的代码，
+     * 如果有catch，进入catch。但一定会进入finally
      * @return
      */
     public int mustFinally4() {
@@ -51,7 +51,7 @@ public class ReturnFinally {
         }
     }
 
-    public int mustFinally7() throws Exception {
+    public int mustFinally7() {
         try {
             return 1 / 0;
         } catch (Exception e) {
@@ -61,4 +61,19 @@ public class ReturnFinally {
         }
         return 1;
     }
+
+
+    public int mustFinally8() {
+        try {
+            int a = 1 / 0;
+            log.info("mustFinally8 log info");
+            return 1;
+        } catch (Exception e) {
+            log.info("mustFinally8 catch");
+        } finally {
+            log.info("mustFinally8 finally");
+            return 2;
+        }
+    }
+
 }
