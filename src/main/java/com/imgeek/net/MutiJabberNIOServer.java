@@ -23,8 +23,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 class SelectAcceptor implements Runnable {
     private int port = 5763;
 
-    private int capacity = 1024;
-
     private Queue<SocketChannel> socketChannelQueue;
 
     SelectAcceptor(Queue socketChannelQueue) {
@@ -95,37 +93,17 @@ class SelectProcess implements Runnable {
         }
     }
 
-    private void writeToSockets() throws IOException {
-        int readyWrite = writeSelector.selectNow();
-        log.debug("write_from_socket, readyWrite:{}", readyWrite);
-        if (readyWrite > 0) {
-            Set<SelectionKey> selectionKeys = writeSelector.selectedKeys();
-            Iterator<SelectionKey> itr = selectionKeys.iterator();
-            while (itr.hasNext()) {
-                SelectionKey key = itr.next();
-                writeToSocket(key);
-                itr.remove();
-            }
-            selectionKeys.clear();
+    private void registerReadSocket() throws IOException {
+        SocketChannel socketChannel = socketChannelQueue.poll();
+        while (socketChannel != null) {
+            log.info("register");
+            socketChannel.configureBlocking(false);
+            SelectionKey key = socketChannel.register(readSelector, SelectionKey.OP_READ);
+            key.attach(socketChannel);
+            key = socketChannel.register(writeSelector, SelectionKey.OP_WRITE);
+            key.attach(socketChannel);
+            socketChannel = socketChannelQueue.poll();
         }
-    }
-
-    private int writeToSocket(SelectionKey key) throws IOException {
-        int bytesWriten = 0;
-        int totalBytesWriten = bytesWriten;
-        SocketChannel socketChannel = (SocketChannel) key.attachment();
-        writeByteBuffer.put("Hello I am server!\n".getBytes());
-        writeByteBuffer.flip();
-        bytesWriten = socketChannel.write(writeByteBuffer);
-        totalBytesWriten += bytesWriten;
-        while (bytesWriten > 0) {
-            bytesWriten = socketChannel.write(writeByteBuffer);
-            totalBytesWriten += bytesWriten;
-        }
-        key.cancel();
-        writeByteBuffer.clear();
-        log.info("totalBytesWriten :{}", totalBytesWriten);
-        return totalBytesWriten;
     }
 
     private void readFromSockets() throws IOException {
@@ -143,42 +121,39 @@ class SelectProcess implements Runnable {
         }
     }
 
-    private void registerWriteSocket(SelectionKey selectionKey) throws ClosedChannelException {
-        SocketChannel socketChannel = (SocketChannel) selectionKey.attachment();
-        if (socketChannel != null) {
-            log.info("register write socket");
-            socketChannel.register(writeSelector, SelectionKey.OP_WRITE, socketChannel);
-        }
-    }
-
-    private int readFromSocket(SelectionKey selectionKey) throws IOException {
+    private void readFromSocket(SelectionKey selectionKey) throws IOException {
         log.info("read_from_socket");
-        int bytesReaded = 0;
-        int totalBytesReaded = bytesReaded;
 
         try {
             SocketChannel socketChannel = (SocketChannel) selectionKey.attachment();
-            bytesReaded = socketChannel.read(readByteBuffer);
-            totalBytesReaded += bytesReaded;
-            while (bytesReaded > 0) {
-                bytesReaded = socketChannel.read(readByteBuffer);
-                totalBytesReaded += bytesReaded;
-            }
-            readByteBuffer.flip();
-            //receive client socket close
-            if (bytesReaded == -1) {
-                throw new IOException("socketchannel read ret bytesReaded:".concat(String.valueOf(bytesReaded)));
-            }
-            log.info("bytesReaded : {}, receive {} from client.", bytesReaded, byteBufferToString(readByteBuffer));
-            registerWriteSocket(selectionKey);
+            int totalBytesReaded = read(socketChannel, readByteBuffer);
+//            registerWriteSocket(selectionKey);
         } catch (IOException e) {
             log.info(e.getMessage());
             unRegisterReadSocket(selectionKey);
         } finally {
             log.info("readByteBuffer clear");
             readByteBuffer.clear();
-            log.info("totalBytesReaded:{}", totalBytesReaded);
         }
+    }
+
+    private int read(SocketChannel socketChannel, ByteBuffer byteBuffer) throws IOException {
+        int bytesReaded = 0;
+        int totalBytesReaded = bytesReaded;
+
+        bytesReaded = socketChannel.read(byteBuffer);
+        totalBytesReaded += bytesReaded;
+        while (bytesReaded > 0) {
+            bytesReaded = socketChannel.read(byteBuffer);
+            totalBytesReaded += bytesReaded;
+        }
+        //receive client socket close
+        if (bytesReaded == -1) {
+            throw new IOException("socketchannel read ret bytesReaded:".concat(String.valueOf(bytesReaded)));
+        }
+        //print client sent message
+        byteBuffer.flip();
+        log.info("bytesReaded : {}, receive {} from client.", bytesReaded, byteBufferToString(byteBuffer));
         return totalBytesReaded;
     }
 
@@ -189,6 +164,52 @@ class SelectProcess implements Runnable {
         selectionKey.channel().close();
     }
 
+    private void registerWriteSocket(SelectionKey selectionKey) throws ClosedChannelException {
+        SocketChannel socketChannel = (SocketChannel) selectionKey.attachment();
+        if (socketChannel != null) {
+            log.info("register write socket");
+            socketChannel.register(writeSelector, SelectionKey.OP_WRITE, socketChannel);
+        }
+    }
+
+    private void writeToSockets() throws IOException {
+        int readyWrite = writeSelector.selectNow();
+        log.debug("write_from_socket, readyWrite:{}", readyWrite);
+        if (readyWrite > 0) {
+            Set<SelectionKey> selectionKeys = writeSelector.selectedKeys();
+            Iterator<SelectionKey> itr = selectionKeys.iterator();
+            while (itr.hasNext()) {
+                SelectionKey key = itr.next();
+                writeToSocket(key);
+                itr.remove();
+            }
+            selectionKeys.clear();
+        }
+    }
+
+    private void writeToSocket(SelectionKey key) throws IOException {
+
+        SocketChannel socketChannel = (SocketChannel) key.attachment();
+        writeByteBuffer.put("Hello I am server!\n".getBytes());
+        writeByteBuffer.flip();
+        int totalBytesWriten = write(socketChannel, writeByteBuffer);
+        key.cancel();
+        writeByteBuffer.clear();
+        log.info("totalBytesWriten :{}", totalBytesWriten);
+    }
+
+    private int write(SocketChannel socketChannel, ByteBuffer byteBuffer) throws IOException {
+        int bytesWriten = 0;
+        int totalBytesWriten = bytesWriten;
+        bytesWriten = socketChannel.write(writeByteBuffer);
+        totalBytesWriten += bytesWriten;
+        while (bytesWriten > 0) {
+            bytesWriten = socketChannel.write(writeByteBuffer);
+            totalBytesWriten += bytesWriten;
+        }
+        return totalBytesWriten;
+    }
+
     private String byteBufferToString(ByteBuffer readByteBuffer) {
         int i = 0;
         byte[] bytes = readByteBuffer.array();
@@ -196,17 +217,6 @@ class SelectProcess implements Runnable {
             if (bytes[i] == 0) break;
         }
         return (new String(bytes)).substring(0, i);
-    }
-
-    private void registerReadSocket() throws IOException {
-        SocketChannel socketChannel = socketChannelQueue.poll();
-        while (socketChannel != null) {
-            log.info("register");
-            socketChannel.configureBlocking(false);
-            SelectionKey key = socketChannel.register(readSelector, SelectionKey.OP_READ);
-            key.attach(socketChannel);
-            socketChannel = socketChannelQueue.poll();
-        }
     }
 }
 

@@ -32,6 +32,7 @@ public class JabberNIOClient {
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
             out.println(str);
             log.info("receive {} from server", in.readLine());
+            out.println(str.concat(String.valueOf(2)));
         } finally {
             try {
                 socket.close();
