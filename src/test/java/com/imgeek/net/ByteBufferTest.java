@@ -45,7 +45,7 @@ public class ByteBufferTest {
         assertEquals(1024, byteBuffer.limit());
         assertEquals(1024, byteBuffer.capacity());
         byteBuffer.put("xieminshitiancai".getBytes());
-        assertEquals(strTest.length(), byteBuffer.position());
+        assertEquals(16, byteBuffer.position());
         assertEquals(1024, byteBuffer.limit());
         assertEquals(1024, byteBuffer.capacity());
         byteBuffer.flip();
