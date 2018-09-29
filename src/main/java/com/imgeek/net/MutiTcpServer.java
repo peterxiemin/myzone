@@ -14,11 +14,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 @Slf4j
-public class MutiJabberServer {
+public class MutiTcpServer {
     private String host;
     public static int port;
 
-    MutiJabberServer(String host, int port) {
+    MutiTcpServer(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -67,7 +67,7 @@ public class MutiJabberServer {
 
     public static void main(String[] args) throws IOException {
         int port = 5763;
-        MutiJabberServer mutiJabberServer = new MutiJabberServer(null, port);
+        MutiTcpServer mutiJabberServer = new MutiTcpServer(null, port);
         mutiJabberServer.createServerSocketAndWaitConnection();
     }
 }

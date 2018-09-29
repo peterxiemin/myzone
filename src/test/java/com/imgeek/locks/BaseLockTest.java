@@ -1,7 +1,7 @@
 package com.imgeek.locks;
 
 import com.imgeek.jvm.MyFunctionInterface;
-import com.imgeek.thread.MyThread;
+import com.imgeek.concurrence.MyThread;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
@@ -29,7 +29,7 @@ public class BaseLockTest {
         }
         try {
             countDownLatch.await();
-            log.info("main thread awake...");
+            log.info("main concurrence awake...");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

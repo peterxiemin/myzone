@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class MyFileIOTest {
     @Test
     public void readLineTest() throws IOException {
-        URL url = MyFileIOTest.class.getClassLoader().getResource("MyFileIOTest.txt");
+        URL url = MyFileIOTest.class.getClassLoader().getResource("net/io/MyFileIOTest.txt");
         ArrayList list = new ArrayList();
         MyFileIO myFileIO = new MyFileIO(new File(url.getFile()), (str) -> {
             char[] dstChars = new char[1];
@@ -31,7 +31,7 @@ public class MyFileIOTest {
 
     @Test
     public void readFileByNIOTest() throws IOException {
-        URL url = MyFileIOTest.class.getClassLoader().getResource("MyFileIOTest.txt");
+        URL url = MyFileIOTest.class.getClassLoader().getResource("net/io/MyFileIOTest.txt");
         ArrayList list = new ArrayList();
         MyFileIO myFileIO = new MyFileIO(new File(url.getFile()), (str) -> {
             char[] dstChars = new char[1];
@@ -44,7 +44,7 @@ public class MyFileIOTest {
 
     @Test
     public void readFileByNIOTest2() throws IOException {
-        URL url = MyFileIOTest.class.getClassLoader().getResource("MyFileIOTest2.txt");
+        URL url = MyFileIOTest.class.getClassLoader().getResource("net/io/MyFileIOTest2.txt");
         ArrayList list = new ArrayList();
         MyFileIO myFileIO = new MyFileIO(new File(url.getFile()), (str) -> {
             char[] dstChars = new char[1];

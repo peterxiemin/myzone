@@ -1,13 +1,9 @@
 package com.imgeek.locks;
 
 import com.imgeek.jvm.MyFunctionInterface;
-import com.imgeek.thread.MyThread;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.CORBA.INTERNAL;
-
-import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertEquals;
 

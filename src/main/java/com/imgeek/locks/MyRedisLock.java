@@ -161,6 +161,6 @@ class MyRedisLock implements IDistributedLock {
             log.debug("del val: " + this.val);
             redisUtil.del(key);
         }
-        log.debug("only unlock what self thread create lock");
+        log.debug("only unlock what self concurrence create lock");
     }
 }

@@ -15,13 +15,13 @@ import java.util.concurrent.CountDownLatch;
  */
 
 @Slf4j
-public class MutiJabberClient {
+public class MutiTcpClient {
     private String host;
     private int port;
     private int threadNum;
     private CountDownLatch countDownLatch;
 
-    public MutiJabberClient(String host, int port, int threadNum) throws IOException {
+    public MutiTcpClient(String host, int port, int threadNum) throws IOException {
         this.host = host;
         this.port = port;
         this.threadNum = threadNum;
@@ -63,7 +63,7 @@ public class MutiJabberClient {
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = 5763;
         int threadNum = 50;
-        MutiJabberClient mutiJabberClient = new MutiJabberClient(null, port, threadNum);
+        MutiTcpClient mutiJabberClient = new MutiTcpClient(null, port, threadNum);
         mutiJabberClient.sendToServer("xieminshitiancai");
     }
 }

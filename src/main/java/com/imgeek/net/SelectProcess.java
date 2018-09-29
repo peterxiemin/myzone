@@ -1,59 +1,21 @@
 package com.imgeek.net;
 
-
-/**
- * @author: xiemin
- * @date: 2018-09-19
- * @desc: 多线程nio_socket服務端
- */
-
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 
-
-@Slf4j
-class SelectAcceptor implements Runnable {
-    private int port = 5763;
-
-    private Queue<SocketChannel> socketChannelQueue;
-
-    SelectAcceptor(Queue socketChannelQueue) {
-        this.socketChannelQueue = socketChannelQueue;
-    }
-
-    @Override
-    public void run() {
-        ServerSocketChannel serverSocketChannel = null;
-        try {
-            serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.bind(new InetSocketAddress(port));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        while (true) {
-            try {
-                SocketChannel socketChannel = serverSocketChannel.accept();
-                log.info("accept");
-                socketChannelQueue.add(socketChannel);
-                Thread.sleep(100);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
-
+/**
+ * @author: xiemin
+ * @date: 2018/9/26 20:49
+ */
 @Slf4j
 class SelectProcess implements Runnable {
 
@@ -83,11 +45,7 @@ class SelectProcess implements Runnable {
             try {
                 registerReadSocket();
                 readFromSockets();
-                writeToSockets();
-                Thread.sleep(100);
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -99,8 +57,6 @@ class SelectProcess implements Runnable {
             log.info("register");
             socketChannel.configureBlocking(false);
             SelectionKey key = socketChannel.register(readSelector, SelectionKey.OP_READ);
-            key.attach(socketChannel);
-            key = socketChannel.register(writeSelector, SelectionKey.OP_WRITE);
             key.attach(socketChannel);
             socketChannel = socketChannelQueue.poll();
         }
@@ -115,6 +71,7 @@ class SelectProcess implements Runnable {
             while (itr.hasNext()) {
                 SelectionKey selectionKey = itr.next();
                 readFromSocket(selectionKey);
+                writeToSocket(selectionKey);
                 itr.remove();
             }
             selectionKeySet.clear();
@@ -127,7 +84,6 @@ class SelectProcess implements Runnable {
         try {
             SocketChannel socketChannel = (SocketChannel) selectionKey.attachment();
             int totalBytesReaded = read(socketChannel, readByteBuffer);
-//            registerWriteSocket(selectionKey);
         } catch (IOException e) {
             log.info(e.getMessage());
             unRegisterReadSocket(selectionKey);
@@ -153,7 +109,7 @@ class SelectProcess implements Runnable {
         }
         //print client sent message
         byteBuffer.flip();
-        log.info("bytesReaded : {}, receive {} from client.", bytesReaded, byteBufferToString(byteBuffer));
+        log.info("totalBytesReaded : {}, receive {} from client.", totalBytesReaded, byteBufferToString(byteBuffer));
         return totalBytesReaded;
     }
 
@@ -188,13 +144,20 @@ class SelectProcess implements Runnable {
     }
 
     private void writeToSocket(SelectionKey key) throws IOException {
-
+        log.info("writeToSocket");
+        String httpResponse = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: 38\r\n" +
+                "Content-Type: text/html\r\n" +
+                "\r\n" +
+                "<html><body>Hello World!</body></html>";
+        int totalBytesWriten = 0;
         SocketChannel socketChannel = (SocketChannel) key.attachment();
-        writeByteBuffer.put("Hello I am server!\n".getBytes());
-        writeByteBuffer.flip();
-        int totalBytesWriten = write(socketChannel, writeByteBuffer);
-        key.cancel();
-        writeByteBuffer.clear();
+        if (socketChannel != null) {
+            writeByteBuffer.put(httpResponse.getBytes());
+            writeByteBuffer.flip();
+            totalBytesWriten = write(socketChannel, writeByteBuffer);
+            writeByteBuffer.clear();
+        }
         log.info("totalBytesWriten :{}", totalBytesWriten);
     }
 
@@ -210,42 +173,18 @@ class SelectProcess implements Runnable {
         return totalBytesWriten;
     }
 
-    private String byteBufferToString(ByteBuffer readByteBuffer) {
-        int i , j;
+    private String byteBufferToLine(ByteBuffer readByteBuffer) {
+        int j;
         char CR = '\r';
         char LF = '\n';
         byte[] bytes = readByteBuffer.array();
-        for (i = 0, j = 1; i < bytes.length - 1 && j < bytes.length; i++, j++) {
-            if (bytes[i] == CR && bytes[j] == LF) break;
+        for (j = 1; j < bytes.length; j++) {
+            if (bytes[j - 1] == CR && bytes[j] == LF) break;
         }
-        return (new String(bytes)).substring(0, i);
-    }
-}
-
-@Slf4j
-public class MutiJabberNIOServer {
-    private String host;
-
-    public static int port;
-
-    private int capacity = 1024;
-
-    private Queue<SocketChannel> socketChannelQueue;
-
-    MutiJabberNIOServer(String host, int port) {
-        this.host = host;
-        this.port = port;
-        socketChannelQueue = new ArrayBlockingQueue(capacity);
+        return (new String(bytes)).substring(0, j);
     }
 
-    public void createServerSocketAndWaitConnection() throws IOException {
-        (new Thread(new SelectAcceptor(socketChannelQueue))).start();
-        (new Thread(new SelectProcess(socketChannelQueue))).start();
-    }
-
-    public static void main(String[] args) throws IOException {
-        int port = 5763;
-        MutiJabberNIOServer mutiJabberServer = new MutiJabberNIOServer(null, port);
-        mutiJabberServer.createServerSocketAndWaitConnection();
+    private String byteBufferToString(ByteBuffer readByteBuffer) {
+        return new String(readByteBuffer.array()).substring(0, readByteBuffer.limit());
     }
 }

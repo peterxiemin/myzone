@@ -13,14 +13,14 @@ import java.util.concurrent.CountDownLatch;
  */
 
 @Slf4j
-public class ChatterClient {
+public class UdpClient {
     private int port;
     private CountDownLatch countDownLatch;
     private int threadNum;
     private InetAddress inetAddress;
     private DatagramSocket socket;
 
-    ChatterClient(String host, int port, int threadNum) throws UnknownHostException, SocketException {
+    UdpClient(String host, int port, int threadNum) throws UnknownHostException, SocketException {
         this.port = port;
         this.threadNum = threadNum;
         this.countDownLatch = new CountDownLatch(threadNum);
@@ -57,7 +57,7 @@ public class ChatterClient {
 
         int port = 5763;
         int threadNum = 50;
-        ChatterClient chatterClient = new ChatterClient(null, port, threadNum);
+        UdpClient chatterClient = new UdpClient(null, port, threadNum);
         chatterClient.sendToServer("xieminshitiancai");
     }
 }

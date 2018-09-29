@@ -15,12 +15,12 @@ import java.net.SocketException;
  */
 
 @Slf4j
-public class ChatterServer {
+public class UdpServer {
     private int port;
     private DatagramPacket dp;
     private byte[] buf;
 
-    public ChatterServer(int port, int bufLength) throws SocketException {
+    public UdpServer(int port, int bufLength) throws SocketException {
         this.port = port;
         buf = new byte[bufLength];
         dp = new DatagramPacket(buf, bufLength);
@@ -44,7 +44,7 @@ public class ChatterServer {
     public static void main(String[] args) throws SocketException {
         int port = 5763;
         int bufLength = 1024;
-        ChatterServer chatterServer = new ChatterServer(port, bufLength);
+        UdpServer chatterServer = new UdpServer(port, bufLength);
         try {
             chatterServer.createDatagramSocketAndWaitConnection();
         } catch (IOException e) {

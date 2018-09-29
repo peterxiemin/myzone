@@ -1,4 +1,4 @@
-package com.imgeek.thread;
+package com.imgeek.concurrence;
 /**
  * author:  xiemin
  * date:    2018-07-17

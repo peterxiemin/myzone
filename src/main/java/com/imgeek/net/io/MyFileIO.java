@@ -54,17 +54,17 @@ public class MyFileIO {
             char LF = '\n';
             int bytesReaded = fileChannel.read(readBuffer);
             byte[] bytes = readBuffer.array();
-            int i, k, j;
-            for (i = 0, k = 0, j = 1; i < readBuffer.position() - 1 && j < readBuffer.position(); i++, j++) {
-                if (bytes[i] == CR && bytes[j] == LF) {
-                    iLineHandler.apply(new String(bytes, k, j - k + 1));
-                    k = j + 1;
+            int i, k;
+            for (i = 1, k = 0; i < readBuffer.position(); i++) {
+                if (bytes[i - 1] == CR && bytes[i] == LF) {
+                    iLineHandler.apply(new String(bytes, k, i - k + 1));
+                    k = i + 1;
                     line++;
                 }
             }
             //EOF
-            if (k != j) {
-                iLineHandler.apply(new String(bytes, k, j - k));
+            if (k != i) {
+                iLineHandler.apply(new String(bytes, k, i - k));
                 line++;
             }
         }

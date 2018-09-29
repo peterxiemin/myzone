@@ -13,12 +13,12 @@ import java.net.Socket;
  */
 
 @Slf4j
-public class JabberClient {
+public class TcpClient {
     private String host;
     private int port;
     private Socket socket;
 
-    public JabberClient(String host, int port) throws IOException {
+    public TcpClient(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
         socket = new Socket(InetAddress.getByName(host), port);
@@ -44,7 +44,7 @@ public class JabberClient {
 
     public static void main(String[] args) throws IOException {
         int port = 5763;
-        JabberClient jabberClient = new JabberClient(null, port);
+        TcpClient jabberClient = new TcpClient(null, port);
         try {
             jabberClient.sendToServer("xieminshitiancai");
         } catch (IOException e) {

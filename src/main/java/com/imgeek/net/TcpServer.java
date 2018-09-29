@@ -14,11 +14,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 @Slf4j
-public class JabberServer {
+public class TcpServer {
     private String host;
     public static int port;
 
-    JabberServer(String host, int port) {
+    TcpServer(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -47,7 +47,7 @@ public class JabberServer {
 
     public static void main(String[] args) throws IOException {
         int port = 5763;
-        JabberServer jabberServer = new JabberServer(null, port);
-        jabberServer.createServerSocketAndWaitConnection();
+        TcpServer tcpServer = new TcpServer(null, port);
+        tcpServer.createServerSocketAndWaitConnection();
     }
 }

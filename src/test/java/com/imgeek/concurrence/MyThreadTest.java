@@ -1,4 +1,4 @@
-package com.imgeek.thread;
+package com.imgeek.concurrence;
 
 import org.junit.Test;
 

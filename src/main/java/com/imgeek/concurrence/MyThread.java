@@ -1,4 +1,4 @@
-package com.imgeek.thread;
+package com.imgeek.concurrence;
 
 import com.imgeek.jvm.MyFunctionInterface;
 import lombok.extern.slf4j.Slf4j;
