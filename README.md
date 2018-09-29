@@ -30,7 +30,9 @@
 ### 四、并发
 >1) 线程安全队列
 >2) Thread使用
->3) Future和Callable使用
+>3) Future和Callable
+>4) 线程执行器
+>5) Fork-Join
 ### 五、锁
 >1) Redis
 >2) zookeeper
@@ -39,8 +41,8 @@
 >1) tcp、udp单（多）线程客服端服务端实例 
 >2) nio服务端实例
 >3) File的标准io操作和nio操作  
->4) http协议解析
->5) web-mvc-framework  
+>4) http协议解析(todo)  
+>5) web-mvc-framework(todo)     
 ### 七、缓存
 >1) Ehcache
 ### 八、JVM

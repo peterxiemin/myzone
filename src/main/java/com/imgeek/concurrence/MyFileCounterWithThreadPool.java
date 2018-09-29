@@ -5,20 +5,22 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 /**
  * @author: xiemin
  * @date: 2018/9/29 9:59
  */
-public class MyFileCounter implements Callable<Integer> {
+public class MyFileCounterWithThreadPool implements Callable<Integer> {
 
     private File directory;
     private String keywords;
-    public MyFileCounter(File directory, String keywords) {
+    private ExecutorService pool;
+
+    public MyFileCounterWithThreadPool(File directory, String keywords, ExecutorService pool) {
         this.directory = directory;
         this.keywords = keywords;
+        this.pool = pool;
     }
 
     @Override
@@ -28,11 +30,9 @@ public class MyFileCounter implements Callable<Integer> {
         List<Integer> results = new ArrayList<>();
         for (File file : files) {
             if (file.isDirectory()) {
-                MyFileCounter myFileCounter = new MyFileCounter(file, keywords);
-                FutureTask<Integer> futureTask = new FutureTask<>(myFileCounter);
-                Thread thread = new Thread(futureTask);
-                thread.start();
-                results.add(futureTask.get());
+                MyFileCounterWithThreadPool myFileCounter = new MyFileCounterWithThreadPool(file, keywords, pool);
+                Future<Integer> future = pool.submit(myFileCounter);
+                results.add(future.get());
             } else {
                 if (search(file)) count++;
             }
