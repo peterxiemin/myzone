@@ -26,7 +26,7 @@ public class MyFileIO {
 
     private boolean isNIO;
 
-    MyFileIO(String filePath, ILineHandler iLineHandler, boolean isNIO) throws IOException {
+    public MyFileIO(String filePath, ILineHandler iLineHandler, boolean isNIO) throws IOException {
         new MyFileIO(new File(filePath), iLineHandler, isNIO);
     }
 
