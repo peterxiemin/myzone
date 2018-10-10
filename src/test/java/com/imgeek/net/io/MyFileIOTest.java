@@ -3,8 +3,7 @@ package com.imgeek.net.io;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -72,5 +71,68 @@ public class MyFileIOTest {
             chars[i] = (char) objects[i];
         }
         return chars;
+    }
+
+    /**
+     * 检查BufferedReader是否每次读取最新文件内容
+     */
+    @Test
+    public void checkFileUpdateTest() {
+        URL url = MyFileIOTest.class.getClassLoader().getResource("net/io/MyFileCheckUpdate.txt");
+        assertEquals("1", readFileByLines(url.getFile()));
+        writeFileByLines(url.getFile(), "2");
+        assertEquals("2", readFileByLines(url.getFile()));
+        //rollback
+        writeFileByLines(url.getFile(), "1");
+        assertEquals("1", readFileByLines(url.getFile()));
+
+    }
+
+    public static String readFileByLines(String fileName) {
+        File file = new File(fileName);
+        BufferedReader reader = null;
+        StringBuffer result = new StringBuffer();
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String tempString = null;
+            // 一次读入一行，直到读入null为文件结束
+            while ((tempString = reader.readLine()) != null) {
+                // 显示行号
+                result.append(tempString);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                }
+            }
+            return result.toString();
+        }
+    }
+
+    public static String writeFileByLines(String fileName, String content) {
+        File file = new File(fileName);
+        BufferedWriter writer = null;
+        StringBuffer result = new StringBuffer();
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            // 一次读入一行，直到读入null为文件结束
+            writer.write(content);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e1) {
+                }
+            }
+            return result.toString();
+        }
     }
 }

@@ -9,9 +9,10 @@ import com.imgeek.net.http.exceptions.HttpParseException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+
 /**
  * @author :xiemin
- * @date:   2018-10-09
+ * @date: 2018-10-09
  */
 @Slf4j
 public class HttpParse {
@@ -48,6 +49,7 @@ public class HttpParse {
         ret.append(httpResponse.getContent());
         return ret.toString();
     }
+
     public static HttpRequest parse(String content) {
         HttpRequest httpRequest = new HttpRequest();
         String[] contentItem = content.split("(\r\n)+");
@@ -67,6 +69,8 @@ public class HttpParse {
                 case "DELETE":
                     httpRequest.setMethod(HttpMethod.DELETE);
                     break;
+                default:
+                    throw new RuntimeException();
             }
             //set url
             httpRequest.setUrl(l1s[1]);
@@ -78,6 +82,8 @@ public class HttpParse {
                 case HttpConstants.VERSION_1_0:
                     httpRequest.setHttpVersion(HttpVersion.v_1_0);
                     break;
+                default:
+                    throw new RuntimeException();
             }
             //set header
             HttpHeader httpHeader = new HttpHeader();
@@ -103,11 +109,13 @@ public class HttpParse {
                     case "Accept-Encoding":
                         httpHeader.setAccept_Encoding(l2s[1]);
                         break;
+                    default:
+                        throw new RuntimeException();
                 }
             }
             httpRequest.setHttpHeader(httpHeader);
             //set content
-            httpRequest.setContent(contentItem[i-1]);
+            httpRequest.setContent(contentItem[i - 1]);
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
             throw new HttpParseException("parse http protol error");

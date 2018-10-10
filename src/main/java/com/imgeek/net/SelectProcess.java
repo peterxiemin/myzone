@@ -52,7 +52,7 @@ class SelectProcess<T> implements Runnable {
                 registerReadSocket();
                 readFromSockets();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
     }
@@ -84,13 +84,13 @@ class SelectProcess<T> implements Runnable {
         }
     }
 
-    private void readFromSocket(SelectionKey selectionKey) throws IOException {
+    private void readFromSocket(SelectionKey selectionKey) {
         log.info("read_from_socket");
 
         try {
             SocketChannel socketChannel = (SocketChannel) selectionKey.attachment();
             read(socketChannel, readByteBuffer);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.info(e.getMessage());
             unRegisterReadSocket(selectionKey);
         } finally {
@@ -124,11 +124,15 @@ class SelectProcess<T> implements Runnable {
         return totalBytesReaded;
     }
 
-    private void unRegisterReadSocket(SelectionKey selectionKey) throws IOException {
+    private void unRegisterReadSocket(SelectionKey selectionKey) {
         log.info("unRegisterReadSocket");
         selectionKey.attach(null);
         selectionKey.cancel();
-        selectionKey.channel().close();
+        try {
+            selectionKey.channel().close();
+        } catch (IOException e) {
+            log.info(e.getMessage(), e);
+        }
     }
 
 //    private void registerWriteSocket(SelectionKey selectionKey) throws ClosedChannelException {

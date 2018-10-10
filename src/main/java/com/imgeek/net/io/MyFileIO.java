@@ -49,6 +49,7 @@ public class MyFileIO {
                 iLineHandler.apply(lineStr);
                 line++;
             }
+            bufferedReader.close();
         } else {
             char CR = '\r';
             char LF = '\n';
