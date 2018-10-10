@@ -42,7 +42,8 @@
 >2) nio服务端实例
 >3) File的标准io操作和nio操作  
 >4) http协议解析
->5) web-mvc-framework(todo)     
+>5) web-mvc-framework(todo)    
+>6) rpc基于socket实现
 ### 七、缓存
 >1) Ehcache
 ### 八、JVM

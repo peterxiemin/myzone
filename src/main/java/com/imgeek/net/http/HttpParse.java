@@ -26,7 +26,7 @@ public class HttpParse {
                 httpVersion = HttpConstants.VERSION_1_0;
                 break;
         }
-        ret.append(String.format("%s %d %s", httpVersion, httpResponse.getStatus(), "OK"));
+        ret.append(String.format("%s %d %s", httpVersion, httpResponse.getStatus(), HttpConstants.OK_DESC));
         ret.append("\r\n");
         HttpHeader httpHeader = httpResponse.getHttpHeader();
         JSONObject obj = (JSONObject) JSONObject.toJSON(httpHeader);

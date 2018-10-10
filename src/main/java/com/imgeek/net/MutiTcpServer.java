@@ -14,29 +14,32 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 @Slf4j
-public class MutiTcpServer {
+public class MutiTcpServer implements ITcpServer {
+    private ITcpConmunicateToClientHandler iTcpConmunicateToClientHandler;
     private String host;
     public static int port;
 
-    MutiTcpServer(String host, int port) {
+    MutiTcpServer(String host, int port, ITcpConmunicateToClientHandler iTcpConmunicateToClientHandler) {
         this.host = host;
         this.port = port;
+        this.iTcpConmunicateToClientHandler = iTcpConmunicateToClientHandler;
     }
 
+    @Override
     public void createServerSocketAndWaitConnection() throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
         Socket socket;
         try {
             while (true) {
                 socket = serverSocket.accept();
-                (new ThreadHanler(socket)).start();
+                iTcpConmunicateToClientHandler.handle(socket);
             }
         } finally {
             serverSocket.close();
         }
     }
 
-    private class ThreadHanler extends Thread {
+    private static class ThreadHanler extends Thread {
         private Socket socket;
 
         ThreadHanler(Socket socket) {
@@ -67,7 +70,12 @@ public class MutiTcpServer {
 
     public static void main(String[] args) throws IOException {
         int port = 5763;
-        MutiTcpServer mutiJabberServer = new MutiTcpServer(null, port);
+        MutiTcpServer mutiJabberServer = new MutiTcpServer(null, port, new ITcpConmunicateToClientHandler() {
+            @Override
+            public void handle(Socket socket) throws IOException {
+                (new ThreadHanler(socket)).start();
+            }
+        });
         mutiJabberServer.createServerSocketAndWaitConnection();
     }
 }

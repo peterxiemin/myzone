@@ -14,32 +14,24 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 @Slf4j
-public class TcpServer {
+public class TcpServer implements ITcpServer {
     private String host;
     public static int port;
+    private ITcpConmunicateToClientHandler iTcpConmunicateToClientHandler;
 
-    TcpServer(String host, int port) {
+    public TcpServer(String host, int port, ITcpConmunicateToClientHandler iTcpConmunicateToClientHandler) {
         this.host = host;
         this.port = port;
+        this.iTcpConmunicateToClientHandler = iTcpConmunicateToClientHandler;
     }
 
+    @Override
     public void createServerSocketAndWaitConnection() throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
         Socket socket;
         try {
             socket = serverSocket.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            try {
-                while (true) {
-                    String line = in.readLine();
-                    log.info(line);
-                    if (line.equalsIgnoreCase("end")) break;
-                    out.println(line);
-                }
-            } finally {
-                socket.close();
-            }
+            iTcpConmunicateToClientHandler.handle(socket);
         } finally {
             serverSocket.close();
         }
@@ -47,7 +39,22 @@ public class TcpServer {
 
     public static void main(String[] args) throws IOException {
         int port = 5763;
-        TcpServer tcpServer = new TcpServer(null, port);
+        TcpServer tcpServer = new TcpServer(null, port, new ITcpConmunicateToClientHandler() {
+            public void handle(Socket socket) throws IOException {
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                try {
+                    while (true) {
+                        String line = in.readLine();
+                        log.info(line);
+                        if (line.equalsIgnoreCase("end")) break;
+                        out.println(line);
+                    }
+                } finally {
+                    socket.close();
+                }
+            }
+        });
         tcpServer.createServerSocketAndWaitConnection();
     }
 }

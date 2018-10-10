@@ -15,36 +15,33 @@ import java.util.concurrent.CountDownLatch;
  */
 
 @Slf4j
-public class MutiTcpClient {
+public class MutiTcpClient implements ITcpClient {
     private String host;
     private int port;
     private int threadNum;
     private CountDownLatch countDownLatch;
+    private ITcpConmunicateToServerHandler iTcpConmunicateToServerHandler;
 
-    public MutiTcpClient(String host, int port, int threadNum) throws IOException {
+    public MutiTcpClient(String host, int port, int threadNum, ITcpConmunicateToServerHandler iTcpConmunicateToServerHandler) {
         this.host = host;
         this.port = port;
         this.threadNum = threadNum;
-        countDownLatch = new CountDownLatch(threadNum);
+        this.iTcpConmunicateToServerHandler = iTcpConmunicateToServerHandler;
+        this.countDownLatch = new CountDownLatch(threadNum);
     }
 
-    public void sendToServer(String str) throws InterruptedException {
+    @Override
+    public void sendToServer() throws IOException, InterruptedException {
         for (int i = 0; i < threadNum; i++) {
             (new Thread(() -> {
-                BufferedReader in;
-                PrintWriter out;
                 Socket socket = null;
                 try {
                     socket = new Socket(InetAddress.getByName(host), port);
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(str);
-                    log.info("receive {} from server", in.readLine());
-                    out.println("END");
+                    iTcpConmunicateToServerHandler.handle(socket);
                 } catch (UnknownHostException e) {
-                    log.error(e.getMessage(), e);
+                    e.printStackTrace();
                 } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+                    e.printStackTrace();
                 } finally {
                     try {
                         if (socket != null)
@@ -63,7 +60,22 @@ public class MutiTcpClient {
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = 5763;
         int threadNum = 50;
-        MutiTcpClient mutiJabberClient = new MutiTcpClient(null, port, threadNum);
-        mutiJabberClient.sendToServer("xieminshitiancai");
+        MutiTcpClient mutiJabberClient = new MutiTcpClient(null, port, threadNum, new ITcpConmunicateToServerHandler() {
+
+            @Override
+            public void handle(Socket socket) throws IOException {
+                BufferedReader in;
+                PrintWriter out;
+                String sendMsg = "I am client";
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                out.println(sendMsg);
+                log.info("receive {} from server", in.readLine());
+                out.println("END");
+            }
+        });
+        mutiJabberClient.sendToServer();
     }
+
+
 }
