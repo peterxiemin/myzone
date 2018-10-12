@@ -10,6 +10,8 @@ public class HttpConstants {
     public static final String CONTENT_TYPE_KEY = "Content-Type";
     public static final String CONTENT_TYPE_VAL = "text/html";
     public static final String CONTENT_LENGTH_KEY = "Content-Length";
+    public static final String ACCEPT_KEY = "Accept";
+    public static final String ACCEPT_VAL = "*/*";
 
     public static final String OK_DESC = "OK";
     public static final int OK_CODE = 200;
