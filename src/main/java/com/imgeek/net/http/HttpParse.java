@@ -99,7 +99,11 @@ public class HttpParse {
                 throw new RuntimeException();
         }
         //set url
-        httpRequest.setUrl(strArr[1]);
+        if (strArr[1].equalsIgnoreCase("/")) {
+            httpRequest.setUrl("/index.html");
+        } else {
+            httpRequest.setUrl(strArr[1]);
+        }
         //set version
         switch (strArr[2]) {
             case HttpConstants.VERSION_1_1:
@@ -138,7 +142,7 @@ public class HttpParse {
                     httpHeader.setAccept_Encoding(lineArr[1]);
                     break;
                 default:
-                    throw new RuntimeException();
+                    log.info("can not handle : {}: {}", lineArr[0], lineArr[1]);
             }
         }
         httpRequest.setHttpHeader(httpHeader);
