@@ -17,3 +17,25 @@ public class SingletonPattern {
         }
     }
 }
+
+
+/**
+ * double-check防止多綫程初始化失败
+ */
+class SingletonPatternWithDoubleCheck {
+    public volatile SingletonPatternWithDoubleCheck singletonPatternWithDoubleCheck = null;
+
+    public SingletonPatternWithDoubleCheck getInstance() {
+        SingletonPatternWithDoubleCheck spwdc = singletonPatternWithDoubleCheck;
+        if (spwdc == null) {
+            synchronized (this) {
+                if (spwdc == null) {
+                    spwdc = new SingletonPatternWithDoubleCheck();
+                    singletonPatternWithDoubleCheck = spwdc;
+                    return singletonPatternWithDoubleCheck;
+                }
+            }
+        }
+        return null;
+    }
+}
