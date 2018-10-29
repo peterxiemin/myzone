@@ -6,17 +6,19 @@ package com.imgeek.algorithm;
  * date:    链表
  */
 
-class Node {
-    Node prev;
-    Node next;
-    int data;
-}
-
 public class MyList {
     private Node head = null;
     private int size = 0;
 
-    public void add(Node node) {
+    class Node {
+        Node prev;
+        Node next;
+        int data;
+    }
+
+    public void add(int data) {
+        Node node = new Node();
+        node.data = data;
         if (node == null) throw new NullPointerException();
         if (head == null) {
             head = node;
@@ -34,7 +36,9 @@ public class MyList {
         ++size;
     }
 
-    public boolean contains(Node node) {
+    public boolean contains(int data) {
+        Node node = new Node();
+        node.data = data;
         for (Node itr = head; itr != null; itr = itr.next) {
             if (node.data == itr.data) {
                 return true;
@@ -43,7 +47,9 @@ public class MyList {
         return false;
     }
 
-    public Node remove(Node node) {
+    public boolean remove(int data) {
+        Node node = new Node();
+        node.data = data;
         for (Node itr = head; itr != null; itr = itr.next) {
             if (node.data == itr.data) {
                 itr.prev.next = itr.next;
@@ -51,28 +57,21 @@ public class MyList {
                     itr.next.prev = itr.prev;
                 }
                 --size;
-                return itr;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    public Node get(int i) {
+    public int get(int i) {
         if (i > size) throw new IndexOutOfBoundsException("i:".concat(String.valueOf(i)).concat(" size:").concat(String.valueOf(size)));
         int j = 0;
         for (Node itr = head; itr != null; itr = itr.next) {
             if ((j++) == i) {
-                return itr;
+                return itr.data;
             }
         }
-        return null;
-    }
-
-    public void showDataForeach() {
-        for (int i = 0; i < size; i++) {
-            Node node = get(i);
-            System.out.printf(String.valueOf(node.data).concat(" "));
-        }
+        return 0;
     }
 
     public int size() {

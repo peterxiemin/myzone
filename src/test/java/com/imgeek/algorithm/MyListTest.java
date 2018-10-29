@@ -20,9 +20,7 @@ public class MyListTest {
     public void create() {
         int size = 10;
         for (int i = 0; i < size; i++) {
-            Node node = new Node();
-            node.data = i;
-            myList.add(node);
+            myList.add(i);
         }
     }
 
@@ -34,24 +32,19 @@ public class MyListTest {
 
     @Test
     public void contains() {
-        Node node = new Node();
-        node.data = 9;
-        assertEquals(true, myList.contains(node));
+        assertEquals(true, myList.contains(1));
     }
 
     @Test
     public void remove() {
-        Node node = new Node();
-        node.data = 9;
-        node = myList.remove(node);
-        assertEquals(false, myList.contains(node));
+        myList.remove(9);
+        assertEquals(false, myList.contains(9));
 
     }
 
     @Test
     public void get() {
         int num = 5;
-        Node node = myList.get(5);
-        assertEquals(num, node.data);
+        assertEquals(num, myList.get(5));
     }
 }
