@@ -8,9 +8,9 @@ import java.util.Arrays;
 public class BTree<Key extends Comparable<Key>, Value> {
 
     /**
-     * 每个节点中最大的数量、必须是偶数并且大于2
+     * 每个节点中最大的子节点数量、必须是偶数并且大于2
      */
-    private final static int M = 4;
+    private final static int M = 16;
     /**
      * 根节点
      */
@@ -19,7 +19,9 @@ public class BTree<Key extends Comparable<Key>, Value> {
      * 树高
      */
     private int height;
-
+    /**
+     * 节点数量
+     */
     private int n;
 
     public BTree() {
@@ -29,7 +31,7 @@ public class BTree<Key extends Comparable<Key>, Value> {
     /**
      * 节点
      */
-    private static final class Node {
+    private static final class Node implements Comparable<Node> {
 
         private int m;
         private Entry[] children = new Entry[M];
@@ -53,6 +55,7 @@ public class BTree<Key extends Comparable<Key>, Value> {
         private void addChildrenNode(Node node) {
             node.parent = this;
             childrenNode[nodeSize++] = node;
+            Arrays.sort(childrenNode, 0, nodeSize);
         }
 
         private void removeChildrenNode(int index) {
@@ -61,6 +64,10 @@ public class BTree<Key extends Comparable<Key>, Value> {
         }
 
 
+        @Override
+        public int compareTo(Node o) {
+            return this.children[0].compareTo(o.children[0]);
+        }
     }
 
     /**
@@ -69,18 +76,10 @@ public class BTree<Key extends Comparable<Key>, Value> {
     private static class Entry implements Comparable<Entry> {
         private Comparable key;
         private final Object val;
-        private Node next;
-
-        public Entry(Comparable key, Object val, Node next) {
-            this.key = key;
-            this.val = val;
-            this.next = next;
-        }
 
         public Entry(Comparable key, Object val) {
             this.key = key;
             this.val = val;
-
         }
 
         @Override
@@ -110,9 +109,34 @@ public class BTree<Key extends Comparable<Key>, Value> {
         return search(root, key, height);
     }
 
-    //todo 查询元素
+    /**
+     * 查询元素
+     *
+     * @param node
+     * @param key
+     * @param ht
+     * @return
+     */
     private Value search(Node node, Key key, int ht) {
+        if (node == null) {
+            return null;
+        }
+        for (int i = 0; i < node.m; i++) {
+            if (eq(key, node.children[i].key)) {
+                return (Value) node.children[i].val;
+            } else if (less(key, node.children[i].key)) {
+                return search(node.childrenNode[i], key, ht - 1);
+            } else if (i + 1 == node.m) {
+                return search(node.childrenNode[i + 1], key, ht - 1);
+            }
+        }
         return null;
+    }
+
+    //todo 移除Key
+    public boolean remove(Key key, int ht) {
+
+        return false;
     }
 
     /**
@@ -126,19 +150,10 @@ public class BTree<Key extends Comparable<Key>, Value> {
     private void insert(Node node, Key key, Object val, int ht) {
         int j;
 
-        Entry entry = new Entry(key, val, null);
+        Entry entry = new Entry(key, val);
 
         if (ht == 0) {
-            for (j = 0; j < node.m; j++) {
-                if (less(key, node.children[j].key)) {
-                    break;
-                }
-            }
-            for (int i = node.m; i > j; i--) {
-                node.children[i] = node.children[i - 1];
-            }
-            node.children[j] = entry;
-            node.m++;
+            node.addEntry(entry);
         } else {
             for (j = 0; j < node.m; j++) {
                 if (less(key, node.children[j].key)) {
@@ -195,7 +210,7 @@ public class BTree<Key extends Comparable<Key>, Value> {
     }
 
     public boolean less(Comparable a, Comparable b) {
-        return a.compareTo(b) < 0;
+        return a.compareTo(b) <= 0;
     }
 
     private boolean eq(Comparable a, Comparable b) {
