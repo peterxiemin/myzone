@@ -142,7 +142,7 @@ public class HttpParse {
                     httpHeader.setAccept_Encoding(lineArr[1]);
                     break;
                 default:
-                    log.info("can not handle : {}: {}", lineArr[0], lineArr[1]);
+                    throw new RuntimeException();
             }
         }
         httpRequest.setHttpHeader(httpHeader);
