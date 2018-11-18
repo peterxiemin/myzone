@@ -2,9 +2,16 @@ package com.imgeek.jvm;
 
 /**
  * @author： xiemin
- * @date:    2018-09-17
- * @desc:    内部类
+ * @date: 2018-09-17
+ * @desc: 内部类
  */
+
+class A {
+    public static void echo() {
+        System.out.println("aaa");
+    }
+}
+
 public class MyInnerClass {
     public int var = 1;
 
@@ -47,5 +54,31 @@ public class MyInnerClass {
             InnerClass1 innerClass1 = new InnerClass1();
             innerClass1.add();
         }
+    }
+
+    private static class LazyHolder {
+        private static int i = 0;
+        public static void incr() {
+            System.out.println(i++);
+        }
+
+    }
+
+    private static class A {
+        static {
+            System.out.printf("bbb");
+        }
+        public static void foo() {
+
+        }
+    }
+
+    public static void main(String[] args) {
+//        for (int i = 0; i < 10000; i++) {
+//            new Thread(()-> {
+//                LazyHolder.incr();
+//            }).start();
+//        }
+        A.foo();
     }
 }

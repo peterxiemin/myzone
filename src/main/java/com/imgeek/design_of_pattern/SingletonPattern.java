@@ -29,6 +29,7 @@ class SingletonPatternWithDoubleCheck {
         SingletonPatternWithDoubleCheck spwdc = singletonPatternWithDoubleCheck;
         if (spwdc == null) {
             synchronized (this) {
+                spwdc = singletonPatternWithDoubleCheck;
                 if (spwdc == null) {
                     spwdc = new SingletonPatternWithDoubleCheck();
                     singletonPatternWithDoubleCheck = spwdc;
