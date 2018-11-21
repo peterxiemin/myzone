@@ -3,6 +3,7 @@ package com.imgeek.algorithm;
 /**
  * @author: xiemin
  * @date: 2018/11/18 9:30
+ * http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html
  */
 public class KMP {
     public boolean kmpSearch(char[] arr, char[] keys) {
