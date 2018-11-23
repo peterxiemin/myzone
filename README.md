@@ -34,6 +34,7 @@
 >3) Future和Callable
 >4) 线程执行器
 >5) Fork-Join
+>6) 生产者-消费者模型
 ### 五、锁
 >1) Redis
 >2) zookeeper
